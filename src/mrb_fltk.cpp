@@ -27,14 +27,14 @@
 #include <Fl/Fl_Window.h>
 #include <Fl/fl_ask.h>
 
-#include "mruby.h"
-#include "mruby/proc.h"
-#include "mruby/data.h"
-#include "mruby/string.h"
-#include "mruby/array.h"
-#include "mruby/hash.h"
-#include "mruby/class.h"
-#include "mruby/variable.h"
+#include <mruby.h>
+#include <mruby/proc.h>
+#include <mruby/data.h>
+#include <mruby/string.h>
+#include <mruby/array.h>
+#include <mruby/hash.h>
+#include <mruby/class.h>
+#include <mruby/variable.h>
 
 #if 1
 #define ARENA_SAVE                                     \
