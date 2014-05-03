@@ -178,8 +178,7 @@ Lots of code was borrowed from [mattn/mruby-fltk3](https://github.com/mattn/mrub
 ## TODO
 
 * The unimplemented list, obviously.
-* Use macros for defining stuff like mattn did.  
-  I stripped alot of them out and wore the methods "old school" just to get it working. Refactor!
+* Use macros for defining stuff like mattn did. I stripped a lot of them out and wrote the methods "old school" just to get it working. Refactor!
 * Tests! How to test?
 
 ## Copyright
