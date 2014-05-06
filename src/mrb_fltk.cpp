@@ -36,18 +36,31 @@
 #include <mruby/class.h>
 #include <mruby/variable.h>
 
-#if 1
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// =-=- GC Arena Macros =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
 #define ARENA_SAVE                                     \
   int ai = mrb_gc_arena_save(mrb);                     \
   if (ai == MRB_ARENA_SIZE) {                          \
     mrb_raise(mrb, E_RUNTIME_ERROR, "arena overflow"); \
   }
+
 #define ARENA_RESTORE            \
   mrb_gc_arena_restore(mrb, ai);
-#else
-#define ARENA_SAVE
-#define ARENA_RESTORE
-#endif
+
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// =-=- Data Types =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+#define DECLARE_TYPE(name, fl_class)                                                       \
+typedef struct {                                                                           \
+  fl_class *fl_instance;                                                                   \
+  mrb_value rb_instance;                                                                   \
+  mrb_state *mrb;                                                                          \
+} mrb_fltk_##name##_context;                                                               \
+                                                                                           \
+static const struct mrb_data_type fltk_##name##_type = { "fltk_" # name, mrb_fltk_free };
 
 static void
 mrb_fltk_free(mrb_state *mrb, void *p)
@@ -55,22 +68,23 @@ mrb_fltk_free(mrb_state *mrb, void *p)
   free(p);
 }
 
-#define DECLARE_TYPE(name, type)                                                           \
-typedef struct {                                                                           \
-  type *fl_instance;                                                                       \
-  mrb_value rb_instance;                                                                   \
-  mrb_state *mrb;                                                                          \
-} mrb_fltk_##name##_context;                                                               \
-                                                                                           \
-static const struct mrb_data_type fltk_##name##_type = { "fltk_" # name, mrb_fltk_free };
-
 DECLARE_TYPE( widget, Fl_Widget );
 DECLARE_TYPE( text_buffer, Fl_Text_Buffer );
 DECLARE_TYPE( image, Fl_Image );
 DECLARE_TYPE( menu_item, Fl_Menu_Item );
 
+#define CONTEXT_SETUP(name)                                                 \
+  mrb_value value_context;                                                  \
+  mrb_fltk_##name##_context *context = NULL;                                \
+  value_context = mrb_iv_get( mrb, self, mrb_intern_cstr(mrb, "context") ); \
+  Data_Get_Struct( mrb, value_context, &fltk_##name##_type, context );
+
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// =-=- mrb_fltk_arg_check used by widgets and windows  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
 static bool
-arg_check(const char *t, int argc, mrb_value *argv)
+mrb_fltk_arg_check(const char *t, int argc, mrb_value *argv)
 {
   int n, l = strlen(t);
   
@@ -86,12 +100,6 @@ arg_check(const char *t, int argc, mrb_value *argv)
   
   return true;
 }
-
-#define CONTEXT_SETUP(name)                                                 \
-  mrb_value value_context;                                                  \
-  mrb_fltk_##name##_context *context = NULL;                                \
-  value_context = mrb_iv_get( mrb, self, mrb_intern_cstr(mrb, "context") ); \
-  Data_Get_Struct( mrb, value_context, &fltk_##name##_type, context );
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // =-=- FLTK::Widget  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -342,7 +350,7 @@ mrb_fltk_group_resizable_set(mrb_state *mrb, mrb_value self)
 // =-=- FLTK::Image -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-// FLTK::Image#initialize
+// FLTK::Image#initialize(context)
 static mrb_value
 mrb_fltk_image_initialize(mrb_state *mrb, mrb_value self)
 {
@@ -366,6 +374,41 @@ mrb_fltk_image_release(mrb_state *mrb, mrb_value self)
   
   return mrb_nil_value();
 }
+
+// FLTK::Image#copy(width, height)
+static mrb_value
+mrb_fltk_image_copy(mrb_state *mrb, mrb_value self)
+{
+  CONTEXT_SETUP(image);
+  
+  mrb_value width, height;
+  mrb_get_args( mrb, "ii", &width, &height );
+  
+  Fl_Image *image = context->fl_instance->copy( mrb_fixnum(width), mrb_fixnum(height) );
+  
+  if ( !image ) return mrb_nil_value();
+  
+  mrb_fltk_image_context* image_context = (mrb_fltk_image_context *) malloc( sizeof(mrb_fltk_image_context) );
+  
+  if ( !image_context ) mrb_raise( mrb, E_RUNTIME_ERROR, "can't alloc memory" );
+  
+  memset( image_context, 0, sizeof(mrb_fltk_image_context) );
+  
+  image_context->rb_instance = self;
+  image_context->fl_instance = image;
+  
+  mrb_value args[1];
+  
+  struct RClass* mrb_fltk_class = mrb_class_get(mrb, "FLTK");
+  struct RClass* mrb_fltk_image_class = mrb_class_ptr( mrb_const_get( mrb, mrb_obj_value(mrb_fltk_class), mrb_intern_cstr(mrb, "Image") ) );
+  
+  args[0] = mrb_obj_value(
+    Data_Wrap_Struct( mrb, mrb->object_class, &fltk_image_type, (void *) image_context )
+  );
+  
+  return mrb_class_new_instance( mrb, 1, args, mrb_fltk_image_class );
+}
+
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // =-=- FLTK  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -468,19 +511,19 @@ mrb_fltk_##name##_init(mrb_state *mrb, mrb_value self)                          
   context->rb_instance = self;                                                                                            \
   context->mrb = mrb;                                                                                                     \
                                                                                                                           \
-  if ( arg_check("o", argc, argv) ) {                                                                                     \
+  if ( mrb_fltk_arg_check("o", argc, argv) ) {                                                                            \
     if ( strcmp( mrb_obj_classname(mrb, argv[0]), "fltk_widget" ) )                                                       \
       mrb_raise(mrb, E_ARGUMENT_ERROR, "invalid argument");                                                               \
     mrb_iv_set( mrb, self, mrb_intern_cstr(mrb, "context"), argv[0] );                                                    \
     return self;                                                                                                          \
-  } else if ( arg_check("iiii", argc, argv) ) {                                                                           \
+  } else if ( mrb_fltk_arg_check("iiii", argc, argv) ) {                                                                  \
     context->fl_instance = (Fl_Widget*) new type (                                                                        \
       (int) mrb_fixnum( argv[0] ),                                                                                        \
       (int) mrb_fixnum( argv[1] ),                                                                                        \
       (int) mrb_fixnum( argv[2] ),                                                                                        \
       (int) mrb_fixnum( argv[3] )                                                                                         \
     );                                                                                                                    \
-  } else if (arg_check("iiiis", argc, argv)) {                                                                            \
+  } else if (mrb_fltk_arg_check("iiiis", argc, argv)) {                                                                   \
     context->fl_instance = (Fl_Widget*) new type (                                                                        \
       (int) mrb_fixnum( argv[0] ),                                                                                        \
       (int) mrb_fixnum( argv[1] ),                                                                                        \
@@ -541,13 +584,13 @@ mrb_fltk_##name##_init(mrb_state *mrb, mrb_value self)                          
   context->rb_instance = self;                                                                              \
   context->mrb = mrb;                                                                                       \
                                                                                                             \
-  if ( arg_check("iis", argc, argv) ) {                                                                     \
+  if ( mrb_fltk_arg_check("iis", argc, argv) ) {                                                            \
     context->fl_instance = (Fl_Widget *) new type (                                                         \
       (int) mrb_fixnum( argv[0] ),                                                                          \
       (int) mrb_fixnum( argv[1] ),                                                                          \
       RSTRING_PTR( argv[2] )                                                                                \
     );                                                                                                      \
-  } else if ( arg_check("iiiis", argc, argv) ) {                                                            \
+  } else if ( mrb_fltk_arg_check("iiiis", argc, argv) ) {                                                   \
     context->fl_instance = (Fl_Widget *) new type (                                                         \
       (int) mrb_fixnum( argv[0] ),                                                                          \
       (int) mrb_fixnum( argv[1] ),                                                                          \
@@ -665,9 +708,9 @@ extern "C"
 {
 
 #define INHERIT_GROUP(name) \
-  mrb_define_method( mrb, mrb_fltk_class##name, "begin", mrb_fltk_group_begin, ARGS_NONE() );              \
-  mrb_define_method( mrb, mrb_fltk_class##name, "end", mrb_fltk_group_end, ARGS_NONE() );                  \
-  mrb_define_method( mrb, mrb_fltk_class##name, "resizable", mrb_fltk_group_resizable_get, ARGS_NONE() );  \
+  mrb_define_method( mrb, mrb_fltk_class##name, "begin",      mrb_fltk_group_begin,         ARGS_NONE() ); \
+  mrb_define_method( mrb, mrb_fltk_class##name, "end",        mrb_fltk_group_end,           ARGS_NONE() ); \
+  mrb_define_method( mrb, mrb_fltk_class##name, "resizable",  mrb_fltk_group_resizable_get, ARGS_NONE() ); \
   mrb_define_method( mrb, mrb_fltk_class##name, "resizable=", mrb_fltk_group_resizable_set, ARGS_REQ(1) ); \
   ARENA_RESTORE;
 
@@ -711,30 +754,40 @@ extern "C"
   mrb_define_method(mrb, mrb_fltk_class ## x, "value=", mrb_fltk_input_value_set, ARGS_NONE()); \
   ARENA_RESTORE;
 
-#define DEFINE_CLASS(x, y)                                                                                      \
-  struct RClass* mrb_fltk_class ## x = mrb_define_class_under( mrb, mrb_fltk_class, # x, mrb_fltk_class ## y ); \
-  mrb_define_method( mrb, mrb_fltk_class ## x, "initialize", mrb_fltk_##x##_init, ARGS_ANY() );                 \
+// Defines a class
+#define DEFINE_CLASS(name, type, super)                                                                   \
+  struct RClass* mrb_fltk_##name##_class = mrb_define_class_under( mrb, mrb_fltk_class, #type, #super );  \
   ARENA_RESTORE;
 
 void
 mrb_mruby_fltk_gem_init(mrb_state* mrb)
 {
   
-  // =-=- FLTK  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  // =-=- FLTK -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  
   ARENA_SAVE;
+  
   struct RClass* mrb_fltk_class = mrb_define_module(mrb, "FLTK");
   
-  mrb_define_module_function( mrb, mrb_fltk_class, "run", mrb_fltk_run, ARGS_NONE() );
-  mrb_define_module_function( mrb, mrb_fltk_class, "alert", mrb_fltk_alert, ARGS_REQ(1) );
-  mrb_define_module_function( mrb, mrb_fltk_class, "ask", mrb_fltk_ask, ARGS_REQ(1) );
-  mrb_define_module_function( mrb, mrb_fltk_class, "choice", mrb_fltk_choice, ARGS_REQ(4) );
-  mrb_define_module_function( mrb, mrb_fltk_class, "set_fonts", mrb_fltk_set_fonts, ARGS_REQ(1) );
-  mrb_define_module_function( mrb, mrb_fltk_class, "font_name", mrb_fltk_font_name, ARGS_REQ(1) );
+  mrb_define_module_function( mrb, mrb_fltk_class, "run",          mrb_fltk_run,          ARGS_NONE() );
+  mrb_define_module_function( mrb, mrb_fltk_class, "alert",        mrb_fltk_alert,        ARGS_REQ(1) );
+  mrb_define_module_function( mrb, mrb_fltk_class, "ask",          mrb_fltk_ask,          ARGS_REQ(1) );
+  mrb_define_module_function( mrb, mrb_fltk_class, "choice",       mrb_fltk_choice,       ARGS_REQ(4) );
+  mrb_define_module_function( mrb, mrb_fltk_class, "set_fonts",    mrb_fltk_set_fonts,    ARGS_REQ(1) );
+  mrb_define_module_function( mrb, mrb_fltk_class, "font_name",    mrb_fltk_font_name,    ARGS_REQ(1) );
   mrb_define_module_function( mrb, mrb_fltk_class, "file_chooser", mrb_fltk_file_chooser, ARGS_REQ(2) );
+  
   ARENA_RESTORE;
   
+  // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   // =-=- FLTK::Image -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-  struct RClass* mrb_fltk_image_class = mrb_define_class_under(mrb, mrb_fltk_class, "Image", mrb->object_class);
+  // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  
+  ARENA_SAVE;
+  
+  struct RClass* mrb_fltk_image_class = mrb_define_class_under( mrb, mrb_fltk_class, "Image", mrb->object_class );
   
   mrb_define_method( mrb, mrb_fltk_image_class, "initialize", mrb_fltk_image_initialize, ARGS_NONE() );
   
@@ -742,37 +795,17 @@ mrb_mruby_fltk_gem_init(mrb_state* mrb)
   DEFINE_FIXNUM_PROP_READONLY(Image, Image, h);
   DEFINE_FIXNUM_PROP_READONLY(Image, Image, d);
   DEFINE_FIXNUM_PROP_READONLY(Image, Image, ld);
-  mrb_define_module_function(mrb, mrb_fltk_image_class, "release", [] (mrb_state* mrb, mrb_value self) -> mrb_value {
-    CONTEXT_SETUP(Image);
-    ((Fl_Shared_Image*) context->fl_instance)->release();
-    mrb_iv_set(mrb, self, mrb_intern_cstr(mrb, "context"), mrb_nil_value());
-    return mrb_nil_value();
-  }, ARGS_REQ(1));
-  mrb_define_module_function(mrb, mrb_fltk_image_class, "copy", [] (mrb_state* mrb, mrb_value self) -> mrb_value {
-    CONTEXT_SETUP(Image);
-    mrb_value width, height;
-    mrb_get_args(mrb, "ii", &width, &height);
-    Fl_Image* image = context->fl_instance->copy(mrb_fixnum(width), mrb_fixnum(height));
-    if (!image) return mrb_nil_value();
-    mrb_fltk_image_context* image_context =
-      (mrb_fltk_image_context*) malloc(sizeof(mrb_fltk_image_context));
-    if (!image_context) mrb_raise(mrb, E_RUNTIME_ERROR, "can't alloc memory");
-    memset(image_context, 0, sizeof(mrb_fltk_image_context));
-    image_context->rb_instance = self;
-    image_context->fl_instance = image;
-    mrb_value args[1];
-    struct RClass* mrb_fltk_class = mrb_class_get(mrb, "FLTK");
-    struct RClass* mrb_fltk_image_class = mrb_class_ptr(mrb_const_get(mrb, mrb_obj_value(mrb_fltk_class), mrb_intern_cstr(mrb, "Image")));
-    args[0] = mrb_obj_value(
-      Data_Wrap_Struct(mrb, mrb->object_class,
-      &fltk_image_type, (void*) image_context));
-    return mrb_class_new_instance(mrb, 1, args, mrb_fltk_image_class);
-  }, ARGS_REQ(1));
   
+  mrb_define_module_function( mrb, mrb_fltk_image_class, "release", mrb_fltk_image_release, ARGS_REQ(1) );
+  mrb_define_module_function( mrb, mrb_fltk_image_class, "copy",    mrb_fltk_image_copy,    ARGS_REQ(1) );
   
+  ARENA_RESTORE;
   
+  // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  // =-=- FLTK::SharedImage -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   
-  DEFINE_CLASS(SharedImage, Image);
+  DEFINE_CLASS( shared_image, "SharedImage", mrb_fltk_image_class );
   mrb_define_module_function(mrb, mrb_fltk_shared_image_class, "get", [] (mrb_state* mrb, mrb_value self) -> mrb_value {
     mrb_value filename;
     mrb_get_args(mrb, "S", &filename);
@@ -978,56 +1011,6 @@ mrb_mruby_fltk_gem_init(mrb_state* mrb)
 
   DEFINE_CLASS(DoubleWindow, Window);
 
-  DEFINE_CLASS(Box, Widget);
-  DEFINE_CLASS(NoBox, Box);
-  DEFINE_CLASS(FlatBox, Box);
-  DEFINE_CLASS(UpBox, Box);
-  DEFINE_CLASS(DownBox, Box);
-  DEFINE_CLASS(ThinUpBox, Box);
-  DEFINE_CLASS(ThinDownBox, Box);
-  DEFINE_CLASS(EngravedBox, Box);
-  DEFINE_CLASS(EmbossedBox, Box);
-  DEFINE_CLASS(BorderBox, Box);
-  DEFINE_CLASS(ShadowBox, Box);
-  DEFINE_CLASS(RoundedBox, Box);
-  DEFINE_CLASS(RShadowBox, Box);
-  DEFINE_CLASS(RFlatBox, Box);
-  DEFINE_CLASS(RoundUpBox, Box);
-  DEFINE_CLASS(RoundDownBox, Box);
-  DEFINE_CLASS(DiamondUpBox, Box);
-  DEFINE_CLASS(DiamondDownBox, Box);
-  DEFINE_CLASS(OvalBox, Box);
-  DEFINE_CLASS(OShadowBox, Box);
-  DEFINE_CLASS(OFlatBox, Box);
-  DEFINE_CLASS(PlasticUpBox, Box);
-  DEFINE_CLASS(PlasticDownBox, Box);
-  DEFINE_CLASS(PlasticThinUpBox, Box);
-  DEFINE_CLASS(PlasticThinDownBox, Box);
-  DEFINE_CLASS(PlasticRoundUpBox, Box);
-  DEFINE_CLASS(PlasticRoundDownBox, Box);
-  DEFINE_CLASS(ClassicUpBox, Box);
-  DEFINE_CLASS(ClassicDownBox, Box);
-  DEFINE_CLASS(ClassicThinUpBox, Box);
-  DEFINE_CLASS(ClassicThinDownBox, Box);
-  DEFINE_CLASS(ClassicRoundUpBox, Box);
-  DEFINE_CLASS(ClassicRoundDownBox, Box);
-  DEFINE_CLASS(BorderFrame, Box);
-  DEFINE_CLASS(UpFrame, Box);
-  DEFINE_CLASS(DownFrame, Box);
-  DEFINE_CLASS(ThinUpFrame, Box);
-  DEFINE_CLASS(ThinDownFrame, Box);
-  DEFINE_CLASS(EngravedFrame, Box);
-  DEFINE_CLASS(EmbossedFrame, Box);
-  DEFINE_CLASS(ShadowFrame, Box);
-  DEFINE_CLASS(RoundedFrame, Box);
-  DEFINE_CLASS(OvalFrame, Box);
-  DEFINE_CLASS(PlasticUpFrame, Box);
-  DEFINE_CLASS(PlasticDownFrame, Box);
-  DEFINE_CLASS(ClassicUpFrame, Box);
-  DEFINE_CLASS(ClassicDownFrame, Box);
-  DEFINE_CLASS(ClassicThinUpFrame, Box);
-  DEFINE_CLASS(ClassicThinDownFrame, Box);
-
   struct RClass* _class_fltk3_TextBuffer = mrb_define_class_under(mrb, mrb_fltk_class, "TextBuffer", mrb->object_class);
   mrb_define_method(mrb, _class_fltk3_TextBuffer, "initialize", [] (mrb_state* mrb, mrb_value self) -> mrb_value {
     mrb_fltk3_TextBuffer_context* context =
@@ -1069,10 +1052,7 @@ mrb_mruby_fltk_gem_init(mrb_state* mrb)
   fltk3::register_images();
 }
 
-void
-mrb_mruby_fltk3_gem_final(mrb_state* mrb)
-{
-}
+void mrb_mruby_fltk3_gem_final(mrb_state* mrb) {}
 
 }
  
