@@ -1,6 +1,6 @@
 # MRuby FLTK
 
-FLTK 1.3.2 GUI binding, built for MRuby 1.0.0.
+[FLTK](http://www.fltk.org/index.php) 1.3.2 GUI binding, built for MRuby 1.0.0.
 
 1.3.2 is the latest stable version of FLTK.
 
