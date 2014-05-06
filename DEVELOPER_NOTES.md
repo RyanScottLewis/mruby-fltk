@@ -2,6 +2,8 @@
 
 The macros used are to remain consistent.
 
+`#` means to "stringize" the argument, `##` means to "token paste" (inline replace)
+
 ## Arguments
 
 `name` is the downcase'd, snake cased name of a class. (`my_awesome_thing`)  
@@ -16,6 +18,15 @@ Indirection (`*`) and reference (`&`) operators should be prepended to the varia
     my_type *my_thing;
     my_type other_thing;
     my_thing = &other_thing;
+
+## Typecasts
+
+    (some_type) some_thing
+    (void *) stuff
+    (void *) stuff
+    
+    int i = 65;
+    char *p = (char *) &i;
 
 ## Functions
 
@@ -36,6 +47,6 @@ Getter functions are appended with `_get` and setter functions are appended with
 
     // Comment
     type
-    function_name( arg_type argument_name, arg_type_pointer *argument_pointer )
+    function_name(arg_type argument_name, arg_type_pointer *argument_pointer)
     {
     }

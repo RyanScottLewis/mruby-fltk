@@ -9,37 +9,46 @@ Lots of code was borrowed from [mattn/mruby-fltk3](https://github.com/mattn/mrub
 > NOTE: Not yet released!  
 > **Do not use until it is on the list of [MRuby Gems](http://www.mruby.org/libraries/) and this notice is gone.**
 
+## Method Names
+
+A few method names have been renamed to make them less ambiguous such as renaming ambiguous methods like `w` and `h` to `width` and `height`
+or to make them more Ruby-ish such as renaming `labelfont` to `label_font`.
+
 ## Class List
 
 ### Implemented
 
-    C                     | Ruby
-    ----------------------|---------------------
-    Fl                    | FLTK (module)
-    Fl_Box                | FLTK::Box
-    Fl_Button             | FLTK::Button
-    Fl_Check_Button       | FLTK::CheckButton
-    Fl_Double_Window      | FLTK::DoubleWindow
-    Fl_File_Chooser       | FLTK::FileChooser
-    Fl_Image              | FLTK::Image
-    Fl_Input              | FLTK::Input
-    Fl_Light_Button       | FLTK::LightButton
-    Fl_Menu               | FLTK::Menu
-    Fl_Menu_Bar           | FLTK::MenuBar
-    Fl_Menu_Button        | FLTK::MenuButton
-    Fl_Radio_Button       | FLTK::RadioButton
-    Fl_Radio_Light_Button | FLTK::RadioLightButton
-    Fl_Radio_Round_Button | FLTK::RadioRoundButton
-    Fl_Repeat_Button      | FLTK::RepeatButton
-    Fl_Return_Button      | FLTK::ReturnButton
-    Fl_Round_Button       | FLTK::RoundButton
-    Fl_Select_Browser     | FLTK::SelectBrowser
-    Fl_Shared_Image       | FLTK::SharedImage
-    Fl_Text_Display       | FLTK::TextDisplay
-    Fl_Text_Editor        | FLTK::TextEditor
-    Fl_Toggle_Button      | FLTK::ToggleButton
-    Fl_Value_Output       | FLTK::ValueOutput
-    Fl_Window             | FLTK::Window
+Note that not all classes are fully implemented yet.
+This means that not all of their public member functions have been mapped to instance methods on the Ruby side.
+In the same light, not all of their static public member functions have been mapped to class methods.
+
+    C                     | Ruby                   | Fully Implemented?
+    ----------------------|------------------------|--------------------
+    Fl                    | FLTK (module)          | √
+    Fl_Box                | FLTK::Box              | 
+    Fl_Button             | FLTK::Button           | 
+    Fl_Check_Button       | FLTK::CheckButton      | 
+    Fl_Double_Window      | FLTK::DoubleWindow     | 
+    Fl_File_Chooser       | FLTK::FileChooser      | 
+    Fl_Image              | FLTK::Image            | 
+    Fl_Input              | FLTK::Input            | 
+    Fl_Light_Button       | FLTK::LightButton      | 
+    Fl_Menu               | FLTK::Menu             | 
+    Fl_Menu_Bar           | FLTK::MenuBar          | 
+    Fl_Menu_Button        | FLTK::MenuButton       | 
+    Fl_Radio_Button       | FLTK::RadioButton      | 
+    Fl_Radio_Light_Button | FLTK::RadioLightButton | 
+    Fl_Radio_Round_Button | FLTK::RadioRoundButton | 
+    Fl_Repeat_Button      | FLTK::RepeatButton     | 
+    Fl_Return_Button      | FLTK::ReturnButton     | 
+    Fl_Round_Button       | FLTK::RoundButton      | 
+    Fl_Select_Browser     | FLTK::SelectBrowser    | 
+    Fl_Shared_Image       | FLTK::SharedImage      | 
+    Fl_Text_Display       | FLTK::TextDisplay      | 
+    Fl_Text_Editor        | FLTK::TextEditor       | 
+    Fl_Toggle_Button      | FLTK::ToggleButton     | 
+    Fl_Value_Output       | FLTK::ValueOutput      | 
+    Fl_Window             | FLTK::Window           | 
 
 ### Unimplemented
 
@@ -191,6 +200,7 @@ Feel free to fork, implement, and send a pull request for any of these widgets!
 * Start a feature/bugfix branch
 * Commit and push until you are happy with your contribution
 * Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
+* YARD
 
 ## Copyright
 
