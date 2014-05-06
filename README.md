@@ -15,7 +15,7 @@ Lots of code was borrowed from [mattn/mruby-fltk3](https://github.com/mattn/mrub
 
     C                     | Ruby
     ----------------------|---------------------
-    Fl                    | FLTK
+    Fl                    | FLTK (module)
     Fl_Box                | FLTK::Box
     Fl_Button             | FLTK::Button
     Fl_Check_Button       | FLTK::CheckButton
