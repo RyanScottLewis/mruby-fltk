@@ -196,4 +196,4 @@ Feel free to fork, implement, and send a pull request for any of these widgets!
 
 Copyright © 2014 Ryan Scott Lewis <ryanscottlewis@lewis-software.com>.
 
-The MIT License (MIT) - See LICENSE for further details.
+The MIT License (MIT) - See [LICENSE](blob/master/LICENSE) for further details.
