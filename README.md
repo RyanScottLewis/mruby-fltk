@@ -24,7 +24,7 @@ In the same light, not all of their static public member functions have been map
 
     C                     | Ruby                   | Fully Implemented?
     ----------------------|------------------------|--------------------
-    Fl                    | FLTK (module)          | √
+    Fl                    | FLTK (module)          | 
     Fl_Box                | FLTK::Box              | 
     Fl_Button             | FLTK::Button           | 
     Fl_Check_Button       | FLTK::CheckButton      | 

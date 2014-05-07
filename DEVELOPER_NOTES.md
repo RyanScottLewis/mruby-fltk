@@ -36,12 +36,13 @@ All functions start with `mrb_fltk_`.
 
 Functions which are defined on MRuby objects are named like so:
 
-    mrb_fltk_class_name_method_name
+    mrb_fltk_#class_name#_#method_name#_method
+    mrb_fltk_#class_name#_#method_name#_class_method
 
 Getter functions are appended with `_get` and setter functions are appended with `_set`:
 
-    mrb_fltk_crazy_cowboy_horse_set
-    mrb_fltk_crazy_cowboy_horse_get
+    mrb_fltk_crazy_cowboy_horse_set_method
+    mrb_fltk_crazy_cowboy_horse_get_method
 
 ### Function Definitions
 
