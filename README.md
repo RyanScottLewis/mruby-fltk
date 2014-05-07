@@ -191,6 +191,8 @@ Feel free to fork, implement, and send a pull request for any of these widgets!
 * The unimplemented list, obviously.
 * Example utilizing all implemented classes.
 * Tests! How to test?
+* Macro for `( (Fl_Class_Name *) context->fl_instance )`
+* Macro for `if ( strcmp( mrb_obj_classname(mrb, argv[0]), "fltk_widget" ) ) mrb_raise(mrb, E_ARGUMENT_ERROR, "invalid argument")`
 
 ## Contributing
 

@@ -50,7 +50,6 @@
 // =-=- Widget Macro =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 // Creates an initialize method for the class with the name mrb_fltk_##name##_initialize
-// TODO USE NEW CONTEXT_CREATE and CONTEXT_SET_INSTANCE_VARIABLE macros
 #define DECLARE_WIDGET(name, type)                                                                                        \
 static mrb_value                                                                                                          \
 mrb_fltk_##name##_initialize_method(mrb_state *mrb, mrb_value self)                                                       \
@@ -60,13 +59,7 @@ mrb_fltk_##name##_initialize_method(mrb_state *mrb, mrb_value self)             
                                                                                                                           \
   mrb_get_args( mrb, "*", &argv, &argc );                                                                                 \
                                                                                                                           \
-  mrb_fltk_widget_context *context = (mrb_fltk_widget_context *) malloc( sizeof(mrb_fltk_widget_context) );               \
-                                                                                                                          \
-  if ( !context ) mrb_raise(mrb, E_RUNTIME_ERROR, "can't alloc memory");                                                  \
-                                                                                                                          \
-  memset( context, 0, sizeof(mrb_fltk_widget_context) );                                                                  \
-  context->rb_instance = self;                                                                                            \
-  context->mrb = mrb;                                                                                                     \
+  CONTEXT_CREATE( widget, context );                                                                                      \
                                                                                                                           \
   if ( mrb_fltk_arg_check("o", argc, argv) ) {                                                                            \
     if ( strcmp( mrb_obj_classname(mrb, argv[0]), "fltk_widget" ) ) mrb_raise(mrb, E_ARGUMENT_ERROR, "invalid argument"); \
@@ -92,9 +85,7 @@ mrb_fltk_##name##_initialize_method(mrb_state *mrb, mrb_value self)             
     mrb_raise( mrb, E_ARGUMENT_ERROR, "invalid argument" );                                                               \
   }                                                                                                                       \
                                                                                                                           \
-  mrb_iv_set( mrb, self, mrb_intern_cstr(mrb, "context"), mrb_obj_value(                                                  \
-    Data_Wrap_Struct( mrb, mrb->object_class, &fltk_widget_type, (void *) context) )                                      \
-  );                                                                                                                      \
+  CONTEXT_SET_INSTANCE_VARIABLE( widget, context);                                                                        \
                                                                                                                           \
   return self;                                                                                                            \
 }
@@ -102,22 +93,15 @@ mrb_fltk_##name##_initialize_method(mrb_state *mrb, mrb_value self)             
 // =-=- Window Macro =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 // Creates an initialize method for the class with the name mrb_fltk_##name##_initialize
-// TODO USE NEW CONTEXT_CREATE and CONTEXT_SET_INSTANCE_VARIABLE macros
 #define DECLARE_WINDOW(name, type)                                                                          \
 static mrb_value                                                                                            \
 mrb_fltk_##name##_initialize_method(mrb_state *mrb, mrb_value self)                                         \
 {                                                                                                           \
   mrb_value *argv;                                                                                          \
   int argc;                                                                                                 \
-  mrb_get_args(mrb, "*", &argv, &argc);                                                                     \
+  mrb_get_args( mrb, "*", &argv, &argc );                                                                   \
                                                                                                             \
-  mrb_fltk_widget_context *context = (mrb_fltk_widget_context *) malloc( sizeof(mrb_fltk_widget_context) ); \
-                                                                                                            \
-  if ( !context ) mrb_raise(mrb, E_RUNTIME_ERROR, "can't alloc memory");                                    \
-                                                                                                            \
-  memset( context, 0, sizeof(mrb_fltk_widget_context) );                                                    \
-  context->rb_instance = self;                                                                              \
-  context->mrb = mrb;                                                                                       \
+  CONTEXT_CREATE( widget, context );                                                                        \
                                                                                                             \
   if ( mrb_fltk_arg_check("iis", argc, argv) ) {                                                            \
     context->fl_instance = (Fl_Widget *) new type (                                                         \
@@ -137,9 +121,7 @@ mrb_fltk_##name##_initialize_method(mrb_state *mrb, mrb_value self)             
     mrb_raise( mrb, E_ARGUMENT_ERROR, "invalid argument" );                                                 \
   }                                                                                                         \
                                                                                                             \
-  mrb_iv_set( mrb, self, mrb_intern_cstr(mrb, "context"), mrb_obj_value(                                    \
-    Data_Wrap_Struct( mrb, mrb->object_class, &fltk_widget_type, (void*) context) )                         \
-  );                                                                                                        \
+  CONTEXT_SET_INSTANCE_VARIABLE( widget, context);                                                          \
                                                                                                             \
   return self;                                                                                              \
 }
@@ -169,14 +151,6 @@ mrb_fltk_##x##_initialize_method(mrb_state *mrb, mrb_value self)          \
 // =-=- Constant Macro =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=
 
 #define DEFINE_FIXNUM_CONSTANT(rb_name, fl_name, module) mrb_define_const( mrb, module, #rb_name, mrb_fixnum(fl_name) );
-
-// =-=- Window Macro =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=
-
-#define INHERIT_GROUP(name) \
-  mrb_define_method( mrb, mrb_fltk_##name##_class, "begin",      mrb_fltk_group_begin,         ARGS_NONE() ); \
-  mrb_define_method( mrb, mrb_fltk_##name##_class, "end",        mrb_fltk_group_end,           ARGS_NONE() ); \
-  mrb_define_method( mrb, mrb_fltk_##name##_class, "resizable",  mrb_fltk_group_resizable_get, ARGS_NONE() ); \
-  mrb_define_method( mrb, mrb_fltk_##name##_class, "resizable=", mrb_fltk_group_resizable_set, ARGS_REQ(1) ); \
 
 // =-=- Fixnum Attribute Macros =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=
 

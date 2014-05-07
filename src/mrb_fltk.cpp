@@ -40,19 +40,25 @@
 #include <mruby/variable.h>
 
 #include "mrb_fltk.h"
+
+#include "helpers.h"
+
 #include "fltk.h"
+#include "widget.h"
 
 #include "button.h"
 #include "group.h"
-#include "helpers.h"
+
 #include "image.h"
+#include "shared_image.h"
+
 #include "input.h"
+#include "value_output.h"
+
+#include "window.h"
+
 #include "menu_bar.h"
 #include "menu_item.h"
-#include "shared_image.h"
-#include "value_output.h"
-#include "widget.h"
-#include "window.h"
 
 // =-=- Contexts -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -63,6 +69,8 @@ CONTEXT_DEFINE( widget,      Fl_Widget );
 
 // =-=- Widgets -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
+DECLARE_WIDGET( widget,         Fl_Widget );
+
 DECLARE_WIDGET( browser,        Fl_Browser );
 DECLARE_WIDGET( input,          Fl_Input );
 DECLARE_WIDGET( menu_bar,       Fl_Menu_Bar );
@@ -71,7 +79,6 @@ DECLARE_WIDGET( select_browser, Fl_Select_Browser );
 DECLARE_WIDGET( text_display,   Fl_Text_Display );
 DECLARE_WIDGET( text_editor,    Fl_Text_Editor );
 DECLARE_WIDGET( value_output,   Fl_Value_Output );
-DECLARE_WIDGET( widget,         Fl_Widget );
 
 // =-=- Buttons -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -90,8 +97,7 @@ DECLARE_WIDGET( toggle_round_button, Fl_Toggle_Round_Button );
 
 // =-=- Windows -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-DECLARE_WINDOW( window,        Fl_Window );
-DECLARE_WINDOW( double_window, Fl_Double_Window );
+
 
 // =-=- Hidden Objects -=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -162,143 +168,37 @@ mrb_mruby_fltk_gem_init(mrb_state *mrb)
   DEFINE_FLTK_MODULE();
   DEFINE_FLTK_WIDGET_CLASS();
   
+  DEFINE_FLTK_BUTTON_CLASSES();
+  
+  DEFINE_FLTK_GROUP_CLASS();
+  
   DEFINE_FLTK_IMAGE_CLASS();
   DEFINE_FLTK_SHARED_IMAGE_CLASS();
+  
+  DEFINE_FLTK_INPUT_CLASS();
+  DEFINE_FLTK_VALUE_OUTPUT_CLASS();
   
   DEFINE_FLTK_MENU_ITEM_CLASS();
   DEFINE_FLTK_MENU_BAR_CLASS();
   
-  DEFINE_FLTK_BUTTON_CLASSES();
-  DEFINE_FLTK_INPUT_CLASS();
-  DEFINE_FLTK_VALUE_OUTPUT_CLASS();
+  DEFINE_FLTK_BROWSER_CLASS();
+  
+  // DEFINE_CLASS(SelectBrowser, Browser); // TODO
+  // DEFINE_CLASS(TextDisplay, Group); // TODO
+  // DEFINE_CLASS(TextEditor, TextDisplay); // TODO
+  
+  
+  DEFINE_FLTK_WINDOW_CLASS();
+  
+  // DECLARE_WINDOW( double_window, Fl_Double_Window ); // TODO
+  // DEFINE_FLTK_DOUBLE_WINDOW_CLASS(); // TODO
   
   
   
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
   
   
   
-  
-  
-  DEFINE_CLASS(Group, Widget);
-  INHERIT_GROUP(Group);
-  
-  
-  
-  DEFINE_CLASS(Browser, Group);
-  
-  mrb_define_method(mrb, mrb_fltk_browser_class, "load", [] (mrb_state* mrb, mrb_value self) -> mrb_value {
-    CONTEXT_SETUP(Widget);
-    mrb_value filename;
-    mrb_get_args(mrb, "S", &filename);
-    return mrb_fixnum_value(((Fl_Browser*) context->fl_instance)->load(RSTRING_PTR(filename)));
-  }, ARGS_REQ(1));
-  
-  DEFINE_FIXNUM_ATTRIBUTE(Browser, Widget, value);
-  
-  mrb_define_method(mrb, mrb_fltk_browser_class, "text", [] (mrb_state* mrb, mrb_value self) -> mrb_value {
-    CONTEXT_SETUP(Widget);
-    mrb_value line = mrb_nil_value(), text = mrb_nil_value();
-    mrb_get_args(mrb, "|i|S", &line, &text);
-    if (mrb_nil_p(text)) {
-      const char* text = NULL;
-      if (mrb_nil_p(line)) {
-        int value = ((Fl_Browser*) context->fl_instance)->value();
-        text = ((Fl_Browser*) context->fl_instance)->text(value);
-      } else {
-        text = ((Fl_Browser*) context->fl_instance)->text(mrb_fixnum(line));
-      }
-      if (!text) return mrb_nil_value();
-      return mrb_str_new_cstr(mrb, text);
-    }
-    ((Fl_Browser*) context->fl_instance)->text(mrb_fixnum(line), RSTRING_PTR(text));
-    return mrb_nil_value();
-  }, ARGS_REQ(1) | ARGS_OPT(1));
-  
-  mrb_define_method(mrb, mrb_fltk_browser_class, "icon", [] (mrb_state* mrb, mrb_value self) -> mrb_value {
-    CONTEXT_SETUP(Widget);
-    mrb_value line = mrb_nil_value(), image = mrb_nil_value();
-    mrb_get_args(mrb, "|i|o", &line, &image);
-    if (mrb_nil_p(image)) {
-      Fl_Image* image = NULL;
-      if (mrb_nil_p(line)) {
-        int value = ((Fl_Browser*) context->fl_instance)->value();
-        image = ((Fl_Browser*) context->fl_instance)->icon(value);
-      } else {
-        image = ((Fl_Browser*) context->fl_instance)->icon(mrb_fixnum(line));
-      }
-      if (!image) return mrb_nil_value();
-      mrb_fltk_image_context* image_context =
-        (mrb_fltk_image_context*) malloc(sizeof(mrb_fltk_image_context));
-      if (!context) mrb_raise(mrb, E_RUNTIME_ERROR, "can't alloc memory");
-      memset(image_context, 0, sizeof(mrb_fltk_image_context));
-      image_context->rb_instance = self;
-      image_context->fl_instance = image;
-      mrb_value args[1];
-      struct RClass* mrb_fltk_class = mrb_class_get(mrb, "FLTK");
-      struct RClass* mrb_fltk_image_class = mrb_class_ptr(mrb_const_get(mrb, mrb_obj_value(mrb_fltk_class), mrb_intern_cstr(mrb, "Image")));
-      args[0] = mrb_obj_value(
-        Data_Wrap_Struct(mrb, mrb->object_class,
-        &fltk_image_type, (void*) image_context));
-      return mrb_class_new_instance(mrb, 1, args, mrb_fltk_image_class);
-    }
-    return mrb_nil_value();
-  }, ARGS_REQ(1) | ARGS_OPT(1));
-  
-  mrb_define_method(mrb, mrb_fltk_browser_class, "add", [] (mrb_state* mrb, mrb_value self) -> mrb_value {
-    CONTEXT_SETUP(Widget);
-    mrb_value text = mrb_nil_value();
-    mrb_get_args(mrb, "S", &text);
-    ((Fl_Browser*) context->fl_instance)->add(RSTRING_PTR(text));
-    return mrb_nil_value();
-  }, ARGS_REQ(1));
-  
-  mrb_define_method(mrb, mrb_fltk_browser_class, "column_widths", [] (mrb_state* mrb, mrb_value self) -> mrb_value {
-    CONTEXT_SETUP(Widget);
-    const int* widths = ((Fl_Browser*) context->fl_instance)->column_widths();
-    int n = 0;
-    ARENA_SAVE;
-    mrb_value arr = mrb_ary_new(mrb);
-    while (widths[n]) {
-      mrb_ary_push(mrb, arr, mrb_fixnum_value(widths[n]));
-      ARENA_RESTORE;
-      n++;
-    }
-    return arr;
-  }, ARGS_NONE());
-  
-  mrb_define_method(mrb, mrb_fltk_browser_class, "column_widths=", [] (mrb_state* mrb, mrb_value self) -> mrb_value {
-    CONTEXT_SETUP(Widget);
-    static int* widths = NULL;
-    if (widths) free((void*) widths);
-    widths = (int*) ((Fl_Browser*) context->fl_instance)->column_widths();
-    mrb_value arr = mrb_nil_value();
-    mrb_get_args(mrb, "A", &arr);
-    int n = 0, len = RARRAY_LEN(arr);
-    widths = (int*) malloc(sizeof(int) * (len+1));
-    for (n = 0; n < len; n++) {
-      widths[n] = mrb_fixnum(mrb_funcall(mrb, RARRAY_PTR(arr)[n], "to_i", 0, NULL));
-    }
-    widths[n] = 0;
-    ((Fl_Browser*) context->fl_instance)->column_widths(widths);
-    return mrb_nil_value();
-  }, ARGS_REQ(1));
-  
-  
-  DEFINE_CLASS(SelectBrowser, Browser);
-  
-  DEFINE_CLASS(TextDisplay, Group);
-  
-  DEFINE_CLASS(TextEditor, TextDisplay);
-  
-  
-  
-  struct RClass* mrb_fltk_window_class = mrb_define_class_under(mrb, mrb_fltk_class, "Window", mrb_fltk_widget_class);
-  mrb_define_method(mrb, mrb_fltk_window_class, "initialize", mrb_fltk_window_init, ARGS_ANY());
-  mrb_define_method(mrb, mrb_fltk_window_class, "show", mrb_fltk_window_show, ARGS_OPT(1));
-  INHERIT_GROUP(Window);
-  
-  
-  DEFINE_CLASS(DoubleWindow, Window);
   
   
   
