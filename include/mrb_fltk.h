@@ -20,9 +20,10 @@
                                                                                              \
   static const struct mrb_data_type fltk_##name##_type = { "fltk_" # name, mrb_fltk_free };
 
-// Instance variable `context` is retrieved and unwrapped to
+// Instance variable `context` is retrieved and unwrapped
 #define CONTEXT_SETUP(name)                                                           \
   mrb_value context_value = mrb_iv_get( mrb, self, mrb_intern_cstr(mrb, "context") ); \
+                                                                                      \
   mrb_fltk_##name##_context *context;                                                 \
   Data_Get_Struct( mrb, context_value, &fltk_##name##_type, context );
 
@@ -150,13 +151,13 @@ mrb_fltk_##name##_initialize_method(mrb_state *mrb, mrb_value self)             
 
 #define DECLARE_HIDDEN_OBJECT(x, y)                                       \
 static mrb_value                                                          \
-mrb_fltk_##x##_init(mrb_state *mrb, mrb_value self)                       \
+mrb_fltk_##x##_initialize_method(mrb_state *mrb, mrb_value self)          \
 {                                                                         \
   mrb_value arg = mrb_nil_value();                                        \
   mrb_get_args(mrb, "|o", &arg);                                          \
                                                                           \
   if ( !mrb_nil_p(arg) ) {                                                \
-    if ( strcmp(mrb_obj_classname(mrb, arg), "fltk_" # y) )               \
+    if ( strcmp( mrb_obj_classname(mrb, arg), "fltk_" # y ) )             \
       mrb_raise( mrb, E_RUNTIME_ERROR, "can't alloc fltk::" # x );        \
                                                                           \
     mrb_iv_set(mrb, self, mrb_intern_cstr(mrb, "context"), arg);          \
@@ -164,6 +165,10 @@ mrb_fltk_##x##_init(mrb_state *mrb, mrb_value self)                       \
                                                                           \
   return self;                                                            \
 }
+
+// =-=- Constant Macro =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=
+
+#define DEFINE_FIXNUM_CONSTANT(rb_name, fl_name, module) mrb_define_const( mrb, module, #rb_name, mrb_fixnum(fl_name) );
 
 // =-=- Window Macro =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=
 
