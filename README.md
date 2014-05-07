@@ -192,7 +192,9 @@ Feel free to fork, implement, and send a pull request for any of these widgets!
 * Example utilizing all implemented classes.
 * Tests! How to test?
 * Macro for `( (Fl_Class_Name *) context->fl_instance )`
-* Macro for `if ( strcmp( mrb_obj_classname(mrb, argv[0]), "fltk_widget" ) ) mrb_raise(mrb, E_ARGUMENT_ERROR, "invalid argument")`
+* Macro or Function for `if ( strcmp( mrb_obj_classname(mrb, argv[0]), "fltk_widget" ) ) mrb_raise(mrb, E_ARGUMENT_ERROR, "invalid argument")`
+* Macro for getter/setter methods (`mrb_fltk_something_attribute_(get|set)`)
+* Function for `struct RClass *mrb_fltk_text_buffer_class = mrb_class_ptr( mrb_const_get( mrb, mrb_obj_value(mrb_fltk_class), mrb_intern_cstr( mrb, "TextBuffer" ) ) );`
 
 ## Contributing
 

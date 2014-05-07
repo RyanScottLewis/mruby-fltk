@@ -21,6 +21,7 @@
   static const struct mrb_data_type fltk_##name##_type = { "fltk_" # name, mrb_fltk_free };
 
 // Instance variable `context` is retrieved and unwrapped
+// TODO: Make more flexible! Used in some methods (like setters)
 #define CONTEXT_SETUP(name)                                                           \
   mrb_value context_value = mrb_iv_get( mrb, self, mrb_intern_cstr(mrb, "context") ); \
                                                                                       \
@@ -49,6 +50,7 @@
 
 // =-=- Widget Macro =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
+// TODO Move to widget.h and rename to DEFINE_WIDGET_INITIALIZE_METHOD
 // Creates an initialize method for the class with the name mrb_fltk_##name##_initialize
 #define DECLARE_WIDGET(name, type)                                                                                        \
 static mrb_value                                                                                                          \
@@ -92,6 +94,7 @@ mrb_fltk_##name##_initialize_method(mrb_state *mrb, mrb_value self)             
 
 // =-=- Window Macro =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
+// TODO Move to window.h and rename to DEFINE_WINDOW_INITIALIZE_METHOD
 // Creates an initialize method for the class with the name mrb_fltk_##name##_initialize
 #define DECLARE_WINDOW(name, type)                                                                          \
 static mrb_value                                                                                            \

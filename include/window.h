@@ -1,8 +1,6 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-DECLARE_WINDOW( window, Fl_Window );
-
 static mrb_value mrb_fltk_window_show_method(mrb_state *mrb, mrb_value self);
 
 #define DEFINE_FLTK_WINDOW_CLASS()                           \

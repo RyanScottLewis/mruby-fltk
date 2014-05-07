@@ -22,6 +22,8 @@ static mrb_value mrb_fltk_browser_text_method(mrb_state *mrb, mrb_value self);
   mrb_define_method( mrb, mrb_fltk_widget_class, "column_widths",  mrb_fltk_widget_image_get_method, ARGS_NONE() ); \
   mrb_define_method( mrb, mrb_fltk_widget_class, "column_widths=", mrb_fltk_widget_image_set_method, ARGS_REQ(1) ); \
                                                                                                                     \
+  DEFINE_CLASS( select_browser, "SelectBrowser", mrb_fltk_browser_class );                                          \
+                                                                                                                    \
   ARENA_RESTORE;
 
 #endif // BROWSER_H

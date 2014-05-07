@@ -40,25 +40,25 @@
 #include <mruby/variable.h>
 
 #include "mrb_fltk.h"
-
 #include "helpers.h"
 
 #include "fltk.h"
 #include "widget.h"
-
-#include "button.h"
 #include "group.h"
 
+#include "button.h"
 #include "image.h"
 #include "shared_image.h"
-
 #include "input.h"
 #include "value_output.h"
-
-#include "window.h"
-
 #include "menu_bar.h"
 #include "menu_item.h"
+#include "browser.h"
+#include "text_buffer.h"
+#include "text_display.h"
+#include "text_editor.h"
+#include "window.h"
+#include "double_window.h"
 
 // =-=- Contexts -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -167,10 +167,9 @@ mrb_mruby_fltk_gem_init(mrb_state *mrb)
 {
   DEFINE_FLTK_MODULE();
   DEFINE_FLTK_WIDGET_CLASS();
+  DEFINE_FLTK_GROUP_CLASS();
   
   DEFINE_FLTK_BUTTON_CLASSES();
-  
-  DEFINE_FLTK_GROUP_CLASS();
   
   DEFINE_FLTK_IMAGE_CLASS();
   DEFINE_FLTK_SHARED_IMAGE_CLASS();
@@ -183,68 +182,12 @@ mrb_mruby_fltk_gem_init(mrb_state *mrb)
   
   DEFINE_FLTK_BROWSER_CLASS();
   
-  // DEFINE_CLASS(SelectBrowser, Browser); // TODO
-  // DEFINE_CLASS(TextDisplay, Group); // TODO
-  // DEFINE_CLASS(TextEditor, TextDisplay); // TODO
-  
+  DEFINE_FLTK_TEXT_BUFFER_CLASS();
+  DEFINE_FLTK_TEXT_DISPLAY_CLASS();
+  DEFINE_FLTK_TEXT_EDITOR_CLASS();
   
   DEFINE_FLTK_WINDOW_CLASS();
-  
-  // DECLARE_WINDOW( double_window, Fl_Double_Window ); // TODO
-  // DEFINE_FLTK_DOUBLE_WINDOW_CLASS(); // TODO
-  
-  
-  
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-  
-  
-  
-  
-  
-  
-  struct RClass* _class_fltk3_TextBuffer = mrb_define_class_under(mrb, mrb_fltk_class, "TextBuffer", mrb->object_class);
-  mrb_define_method(mrb, _class_fltk3_TextBuffer, "initialize", [] (mrb_state* mrb, mrb_value self) -> mrb_value {
-    mrb_fltk3_TextBuffer_context* context =
-      (mrb_fltk3_TextBuffer_context*) malloc(sizeof(mrb_fltk3_TextBuffer_context));
-    if (!context) mrb_raise(mrb, E_RUNTIME_ERROR, "can't alloc memory");
-    memset(context, 0, sizeof(mrb_fltk3_TextBuffer_context));
-    context->rb_instance = self;
-    context->fl_instance = new fltk3::TextBuffer;
-    mrb_iv_set(mrb, self, mrb_intern_cstr(mrb, "context"), mrb_obj_value(
-      Data_Wrap_Struct(mrb, mrb->object_class,
-      &fltk3_TextBuffer_type, (void*) context)));
-    return self;
-  }, ARGS_NONE());
-  
-  mrb_define_method(mrb, _class_fltk3_TextDisplay, "buffer", [] (mrb_state* mrb, mrb_value self) -> mrb_value {
-    CONTEXT_SETUP(Widget);
-    struct RClass* mrb_fltk_class = mrb_class_get(mrb, "FLTK3");
-    struct RClass* _class_fltk3_TextBuffer = mrb_class_ptr(mrb_const_get(mrb, mrb_obj_value(mrb_fltk_class), mrb_intern_cstr(mrb, "TextBuffer")));
-    mrb_value args[1];
-    args[0] = mrb_obj_value(
-      Data_Wrap_Struct(mrb, mrb->object_class,
-      &fltk3_TextBuffer_type, (void*) ((fltk3::TextDisplay*) context->fl_instance)->buffer()));
-    return mrb_class_new_instance(mrb, 1, args, _class_fltk3_TextBuffer);
-  }, ARGS_NONE());
-  
-  mrb_define_method(mrb, _class_fltk3_TextDisplay, "buffer=", [] (mrb_state* mrb, mrb_value self) -> mrb_value {
-    CONTEXT_SETUP(Widget);
-    mrb_value textbuffer;
-    mrb_get_args(mrb, "o", &textbuffer);
-    mrb_value textbuffer_value_context;
-    mrb_fltk3_TextBuffer_context* textbuffer_context = NULL;
-    textbuffer_value_context = mrb_iv_get(mrb, textbuffer, mrb_intern_cstr(mrb, "context"));
-    Data_Get_Struct(mrb, textbuffer_value_context, &fltk3_TextBuffer_type, textbuffer_context);
-    ((fltk3::TextDisplay*) context->fl_instance)->buffer(textbuffer_context->fl_instance);
-    return mrb_nil_value();
-  }, ARGS_REQ(1));
-  
-  DEFINE_FIXNUM_ATTRIBUTE_READER(TextBuffer, TextBuffer, length);
-  DEFINE_STR_PROP(TextBuffer, TextBuffer, text);
-  
-  ARENA_RESTORE;
-  
-  fltk3::register_images();
+  DEFINE_FLTK_DOUBLE_WINDOW_CLASS();
 }
 
 void mrb_mruby_fltk3_gem_final(mrb_state* mrb) {}
