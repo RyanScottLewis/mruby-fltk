@@ -235,23 +235,10 @@ mrb_fltk_##x##_initialize_method(mrb_state *mrb, mrb_value self)          \
 #define DEFINE_CLASS_METHOD(name, rb_method, arguments)                                                                        \
   mrb_define_class_method( mrb, mrb_fltk_##name##_class, #rb_method, mrb_fltk_##name##_##rb_method##_class_method, arguments );
 
-
-
-
-
-
-// TODO
-#define INHERIT_INPUT_VALUE(x)                                                                  \
-  mrb_define_method( mrb, mrb_fltk_class##x, "value",  mrb_fltk_input_value_get, ARGS_NONE() ); \
-  mrb_define_method( mrb, mrb_fltk_class##x, "value=", mrb_fltk_input_value_set, ARGS_NONE() ); \
-  ARENA_RESTORE;
+// =-=- Class/Module Macros =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 // Defines a class with the name mrb_fltk_##name##_class
 #define DEFINE_CLASS(name, type, super)                                                                  \
   struct RClass *mrb_fltk_##name##_class = mrb_define_class_under( mrb, mrb_fltk_class, #type, #super );
-
-
-
-
 
 #endif // MRB_FLTK_H
