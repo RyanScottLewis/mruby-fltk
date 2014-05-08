@@ -46,3 +46,21 @@ mrb_fltk_image_copy_method(mrb_state *mrb, mrb_value self)
   
   return mrb_class_new_instance( mrb, 1, args, mrb_fltk_image_class );
 }
+
+void
+mrb_fltk_image_class_init(mrb_state *mrb)
+{
+  ARENA_SAVE;
+  
+  DEFINE_CLASS( image, "Image", mrb->object_class );
+  
+  DEFINE_INSTANCE_METHOD( image, initialize,    ARGS_REQ(3) );
+  DEFINE_INSTANCE_METHOD( image, copy,          ( MRB_ARGS_REQ(1) | MRB_ARGS_REQ(3) ) );
+  
+  DEFINE_FIXNUM_ATTRIBUTE_READER( image, width,          Fl_Image, w  );
+  DEFINE_FIXNUM_ATTRIBUTE_READER( image, height,         Fl_Image, h  );
+  DEFINE_FIXNUM_ATTRIBUTE_READER( image, depth,          Fl_Image, d  );
+  DEFINE_FIXNUM_ATTRIBUTE_READER( image, line_data_size, Fl_Image, ld );
+  
+  ARENA_RESTORE;
+}

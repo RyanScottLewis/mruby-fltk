@@ -28,3 +28,17 @@ mrb_fltk_set_fonts_method(mrb_state *mrb, mrb_value self)
   
   return mrb_fixnum_value( Fl::set_fonts( RSTRING_PTR(s) ) );
 }
+
+void
+mrb_fltk_module_init(mrb_state *mrb)
+{
+  ARENA_SAVE;
+  
+  struct RClass *mrb_fltk_module = mrb_define_module(mrb, "FLTK");
+  
+  mrb_define_module_function( mrb, mrb_fltk_module, "font_name", mrb_fltk_font_name, ARGS_REQ(1) );
+  mrb_define_module_function( mrb, mrb_fltk_module, "run",       mrb_fltk_run,       ARGS_NONE() );
+  mrb_define_module_function( mrb, mrb_fltk_module, "set_fonts", mrb_fltk_set_fonts, ARGS_REQ(1) );
+  
+  ARENA_RESTORE;
+}

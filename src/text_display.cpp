@@ -36,3 +36,16 @@ mrb_fltk_text_display_buffer_set_method(mrb_state *mrb, mrb_value self)
   
   return mrb_nil_value();
 }
+
+void
+mrb_fltk_text_display_class_init(mrb_state *mrb)
+{
+  ARENA_SAVE;
+  
+  DEFINE_CLASS( text_display, "TextDisplay", mrb_fltk_group_class );
+  
+  mrb_define_method( mrb, mrb_fltk_text_display_class, "buffer",  mrb_fltk_text_display_buffer_get_method, ARGS_NONE() );
+  mrb_define_method( mrb, mrb_fltk_text_display_class, "buffer=", mrb_fltk_text_display_buffer_set_method, ARGS_REQ(1) );
+  
+  ARENA_RESTORE;
+}

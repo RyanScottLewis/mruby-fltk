@@ -28,3 +28,15 @@ mrb_fltk_shared_image_get_method(mrb_state *mrb, mrb_value self)
   
   return mrb_class_new_instance(mrb, 1, args, mrb_fltk_image_class);
 }
+
+void
+mrb_fltk_shared_image_class_init(mrb_state *mrb)
+{
+  ARENA_SAVE;
+  
+  DEFINE_CLASS( shared_image, "SharedImage", mrb_fltk_image_class );
+  
+  DEFINE_CLASS_METHOD( shared_image, get, ARGS_REQ(1) );
+  
+  ARENA_RESTORE;
+}

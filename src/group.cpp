@@ -73,3 +73,14 @@ mrb_fltk_group_resizable_set_method(mrb_state *mrb, mrb_value self)
   
   return mrb_nil_value();
 }
+
+void
+mrb_fltk_group_class_init(mrb_state *mrb)
+{
+  ARENA_SAVE;
+  
+  DEFINE_CLASS( group, "Group", mrb_fltk_widget_class );
+  DEFINE_GROUP_INSTANCE_METHODS( group );
+  
+  ARENA_RESTORE;
+}

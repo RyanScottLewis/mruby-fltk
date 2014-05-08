@@ -10,27 +10,12 @@ static mrb_value mrb_fltk_browser_column_widths_set_method(mrb_state *mrb, mrb_v
 static mrb_value mrb_fltk_browser_icon_method(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_fltk_browser_load_method(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_fltk_browser_text_method(mrb_state *mrb, mrb_value self);
+void mrb_fltk_browser_class_init(mrb_state *mrb);
 
 // =-=- FLTK::SelectBrowser -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=
- 
-static mrb_value mrb_fltk_select_browser_initialize_method(mrb_state *mrb, mrb_value self);
+// TODO: Seperate file
 
-#define DEFINE_FLTK_BROWSER_CLASS()                                                                                 \
-  ARENA_SAVE;                                                                                                       \
-                                                                                                                    \
-  DEFINE_CLASS( browser, "Browser", mrb_fltk_group_class );                                                         \
-                                                                                                                    \
-  DEFINE_INSTANCE_METHOD( browser, load, ARGS_REQ(1)               );                                               \
-  DEFINE_INSTANCE_METHOD( browser, text, ARGS_REQ(1) | ARGS_OPT(1) );                                               \
-  DEFINE_INSTANCE_METHOD( browser, icon, ARGS_REQ(1) | ARGS_OPT(1) );                                               \
-                                                                                                                    \
-  DEFINE_FIXNUM_ATTRIBUTE_ACCESSOR( widget, value, Fl_Browser, value );                                             \
-                                                                                                                    \
-  mrb_define_method( mrb, mrb_fltk_widget_class, "column_widths",  mrb_fltk_widget_image_get_method, ARGS_NONE() ); \
-  mrb_define_method( mrb, mrb_fltk_widget_class, "column_widths=", mrb_fltk_widget_image_set_method, ARGS_REQ(1) ); \
-                                                                                                                    \
-  DEFINE_CLASS( select_browser, "SelectBrowser", mrb_fltk_browser_class );                                          \
-                                                                                                                    \
-  ARENA_RESTORE;
+static mrb_value mrb_fltk_select_browser_initialize_method(mrb_state *mrb, mrb_value self);
+void mrb_fltk_select_browser_class_init(mrb_state *mrb);
 
 #endif // BROWSER_H

@@ -81,28 +81,29 @@ extern "C"
 void
 mrb_mruby_fltk_gem_init(mrb_state *mrb)
 {
-  DEFINE_FLTK_MODULE();
-  DEFINE_FLTK_WIDGET_CLASS();
-  DEFINE_FLTK_GROUP_CLASS();
+  mrb_fltk_module_init(mrb);
+  mrb_fltk_widget_class_init(mrb);
+  mrb_fltk_group_class_init(mrb);
   
-  DEFINE_FLTK_BUTTON_CLASSES();
-  DEFINE_FLTK_INPUT_CLASS();
-  DEFINE_FLTK_VALUE_OUTPUT_CLASS();
+  mrb_fltk_button_class_init(mrb);
+  mrb_fltk_input_class_init(mrb);
+  mrb_fltk_value_output_class_init(mrb);
   
-  DEFINE_FLTK_BROWSER_CLASS();
+  mrb_fltk_browser_class_init(mrb);
+  mrb_fltk_select_browser_class_init(mrb);
   
-  DEFINE_FLTK_IMAGE_CLASS();
-  DEFINE_FLTK_SHARED_IMAGE_CLASS();
+  mrb_fltk_image_class_init(mrb);
+  mrb_fltk_shared_image_class_init(mrb);
   
-  DEFINE_FLTK_MENU_ITEM_CLASS();
-  DEFINE_FLTK_MENU_BAR_CLASS();
+  mrb_fltk_menu_item_class_init(mrb);
+  mrb_fltk_menu_bar_class_init(mrb);
   
-  DEFINE_FLTK_TEXT_BUFFER_CLASS();
-  DEFINE_FLTK_TEXT_DISPLAY_CLASS();
-  DEFINE_FLTK_TEXT_EDITOR_CLASS();
+  mrb_fltk_text_buffer_class_init(mrb);
+  mrb_fltk_text_display_class_init(mrb);
+  mrb_fltk_text_editor_class_init(mrb);
   
-  DEFINE_FLTK_WINDOW_CLASS();
-  DEFINE_FLTK_DOUBLE_WINDOW_CLASS();
+  mrb_fltk_window_class_init(mrb);
+  mrb_fltk_double_window_class_init(mrb);
 }
 
 void mrb_mruby_fltk_gem_final(mrb_state* mrb) {

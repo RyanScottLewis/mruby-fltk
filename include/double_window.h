@@ -1,11 +1,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#define DEFINE_FLTK_WINDOW_CLASS()                                      \
-  ARENA_SAVE;                                                           \
-                                                                        \
-  DEFINE_CLASS( double_window, "DoubleWindow", mrb_fltk_window_class ); \
-                                                                        \
-  ARENA_RESTORE;
+static mrb_value mrb_fltk_double_window_initialize_method(mrb_state *mrb, mrb_value self);
+void mrb_fltk_double_window_class_init(mrb_state *mrb);
 
 #endif // WINDOW_H
