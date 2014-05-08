@@ -1,3 +1,5 @@
+DECLARE_WIDGET( text_display, Fl_Text_Display );
+
 static mrb_value
 mrb_fltk_text_display_buffer_get_method(mrb_state *mrb, mrb_value self)
 {

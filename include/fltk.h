@@ -4,7 +4,6 @@
 static mrb_value mrb_fltk_font_name_method(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_fltk_run_method(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_fltk_set_fonts_method(mrb_state *mrb, mrb_value self);
-void mrb_mruby_fltk_gem_init(mrb_state *mrb);
 
 #define DEFINE_FLTK_MODULE()                                                                           \
   ARENA_SAVE;                                                                                          \

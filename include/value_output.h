@@ -1,6 +1,8 @@
 #ifndef VALUE_OUTPUT_H
 #define VALUE_OUTPUT_H
 
+static mrb_value mrb_fltk_value_output_initialize_method(mrb_state *mrb, mrb_value self);
+
 #define DEFINE_FLTK_VALUE_OUTPUT_CLASS()                              \
   ARENA_SAVE;                                                         \
                                                                       \

@@ -11,6 +11,8 @@
 
 // =-=- Context Macros =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
+// Defines a struct containing the fl instance, mrb instance, and mrb state named mrb_fltk_##name##_context
+// Also defines the mrb datatype for the fl_instance wrapper
 #define CONTEXT_DEFINE(name, fl_class)                                                       \
   typedef struct {                                                                           \
     fl_class *fl_instance;                                                                   \
@@ -134,21 +136,21 @@ mrb_fltk_##name##_initialize_method(mrb_state *mrb, mrb_value self)             
 //   Has ambiguous argument names... also what is this?
 //   Also the error messages suck ass
 
-#define DECLARE_HIDDEN_OBJECT(x, y)                                       \
-static mrb_value                                                          \
-mrb_fltk_##x##_initialize_method(mrb_state *mrb, mrb_value self)          \
-{                                                                         \
-  mrb_value arg = mrb_nil_value();                                        \
-  mrb_get_args(mrb, "|o", &arg);                                          \
-                                                                          \
-  if ( !mrb_nil_p(arg) ) {                                                \
-    if ( strcmp( mrb_obj_classname(mrb, arg), "fltk_" # y ) )             \
-      mrb_raise( mrb, E_RUNTIME_ERROR, "can't alloc fltk::" # x );        \
-                                                                          \
-    mrb_iv_set(mrb, self, mrb_intern_cstr(mrb, "context"), arg);          \
-  } else mrb_raise(mrb, E_RUNTIME_ERROR, "can't alloc fltk::" # x);       \
-                                                                          \
-  return self;                                                            \
+#define DECLARE_HIDDEN_OBJECT(name, type_name)                         \
+static mrb_value                                                       \
+mrb_fltk_##name##_initialize_method(mrb_state *mrb, mrb_value self)    \
+{                                                                      \
+  mrb_value arg = mrb_nil_value();                                     \
+  mrb_get_args(mrb, "|o", &arg);                                       \
+                                                                       \
+  if ( !mrb_nil_p(arg) ) {                                             \
+    if ( strcmp( mrb_obj_classname(mrb, arg), "fltk_" #  type_name ) ) \
+      mrb_raise( mrb, E_RUNTIME_ERROR, "can't alloc fltk::" # name );  \
+                                                                       \
+    mrb_iv_set( mrb, self, mrb_intern_cstr(mrb, "context"), arg );     \
+  } else mrb_raise(mrb, E_RUNTIME_ERROR, "can't alloc fltk::" # name); \
+                                                                       \
+  return self;                                                         \
 }
 
 // =-=- Constant Macro =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=
@@ -240,5 +242,22 @@ mrb_fltk_##x##_initialize_method(mrb_state *mrb, mrb_value self)          \
 // Defines a class with the name mrb_fltk_##name##_class
 #define DEFINE_CLASS(name, type, super)                                                                  \
   struct RClass *mrb_fltk_##name##_class = mrb_define_class_under( mrb, mrb_fltk_class, #type, #super );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #endif // MRB_FLTK_H

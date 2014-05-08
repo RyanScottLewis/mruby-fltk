@@ -1,3 +1,5 @@
+DECLARE_WIDGET( menu_bar, Fl_Menu_Bar );
+
 // FLTK::MenuBar#add(caption, shortcut, &callback) 
 static mrb_value
 mrb_fltk_menu_bar_add_method(mrb_state *mrb, mrb_value self)

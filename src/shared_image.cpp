@@ -1,3 +1,5 @@
+DECLARE_HIDDEN_OBJECT( shared_image, image );
+
 static mrb_value
 mrb_fltk_shared_image_get_method(mrb_state *mrb, mrb_value self)
 {

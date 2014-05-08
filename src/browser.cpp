@@ -1,3 +1,13 @@
+#include <mruby.h>
+#include <mruby/variable.h>
+
+#include "mrb_fltk.h"
+#include "widget.h"
+
+// =-=- FLTK::Browser -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=
+
+DECLARE_WIDGET( browser, Fl_Browser );
+
 // FLTK::Browser#add(line) Adds a new line to the end of the browser.
 static mrb_value
 mrb_fltk_browser_add_method(mrb_state *mrb, mrb_value self)
@@ -138,3 +148,7 @@ mrb_fltk_browser_text_method(mrb_state *mrb, mrb_value self)
   
   return mrb_nil_value(); // TODO: Return text
 }
+
+// =-=- FLTK::SelectBrowser -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=
+
+DECLARE_WIDGET( select_browser, Fl_Select_Browser );

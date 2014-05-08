@@ -1,6 +1,8 @@
 #ifndef INPUT_H
 #define INPUT_H
 
+static mrb_value mrb_fltk_input_initialize_method(mrb_state *mrb, mrb_value self);
+
 #define DEFINE_FLTK_INPUT_CLASS()                                     \
   ARENA_SAVE;                                                         \
                                                                       \

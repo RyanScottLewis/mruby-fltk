@@ -1,3 +1,5 @@
+DECLARE_WIDGET( widget, Fl_Widget );
+
 static void
 _mrb_fltk_widget_callback(Fl_Widget *v, void *data)
 {

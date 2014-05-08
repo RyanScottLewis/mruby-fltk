@@ -1,3 +1,5 @@
+DECLARE_HIDDEN_OBJECT( group, widget );
+
 // FLTK::Group#begin
 static mrb_value
 mrb_fltk_group_begin_method(mrb_state *mrb, mrb_value self)
