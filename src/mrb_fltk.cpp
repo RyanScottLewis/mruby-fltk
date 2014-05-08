@@ -109,3 +109,5 @@ mrb_mruby_fltk_gem_init(mrb_state *mrb)
 void mrb_mruby_fltk_gem_final(mrb_state* mrb) {
 
 }
+
+}
