@@ -76,39 +76,35 @@ CONTEXT_DEFINE( widget, Fl_Widget );
 
 // =-=- Gem Hooks -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-extern "C"
-{
+extern "C" {
 
 void
-mrb_mruby_fltk_gem_init(mrb_state *mrb)
-{
-  mrb_fltk_module_init(mrb);
-  mrb_fltk_widget_class_init(mrb);
-  mrb_fltk_group_class_init(mrb);
-  
-  mrb_fltk_button_class_init(mrb);
-  mrb_fltk_input_class_init(mrb);
-  mrb_fltk_value_output_class_init(mrb);
-  
-  mrb_fltk_browser_class_init(mrb);
-  mrb_fltk_select_browser_class_init(mrb);
-  
-  mrb_fltk_image_class_init(mrb);
-  mrb_fltk_shared_image_class_init(mrb);
-  
-  mrb_fltk_menu_item_class_init(mrb);
-  mrb_fltk_menu_bar_class_init(mrb);
-  
-  mrb_fltk_text_buffer_class_init(mrb);
-  mrb_fltk_text_display_class_init(mrb);
-  mrb_fltk_text_editor_class_init(mrb);
-  
-  mrb_fltk_window_class_init(mrb);
-  mrb_fltk_double_window_class_init(mrb);
+mrb_mruby_fltk_gem_init( mrb_state *mrb ) {
+  mrb_fltk_module_init( mrb );
+  mrb_fltk_widget_class_init( mrb );
+  mrb_fltk_group_class_init( mrb );
+
+  mrb_fltk_button_class_init( mrb );
+  mrb_fltk_input_class_init( mrb );
+  mrb_fltk_value_output_class_init( mrb );
+
+  mrb_fltk_browser_class_init( mrb );
+  mrb_fltk_select_browser_class_init( mrb );
+
+  mrb_fltk_image_class_init( mrb );
+  mrb_fltk_shared_image_class_init( mrb );
+
+  mrb_fltk_menu_item_class_init( mrb );
+  mrb_fltk_menu_bar_class_init( mrb );
+
+  mrb_fltk_text_buffer_class_init( mrb );
+  mrb_fltk_text_display_class_init( mrb );
+  mrb_fltk_text_editor_class_init( mrb );
+
+  mrb_fltk_window_class_init( mrb );
+  mrb_fltk_double_window_class_init( mrb );
 }
 
-void mrb_mruby_fltk_gem_final(mrb_state* mrb) {
-
+void mrb_mruby_fltk_gem_final( mrb_state *mrb ) {
 }
-
 }
