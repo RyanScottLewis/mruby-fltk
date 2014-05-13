@@ -13,6 +13,7 @@
 
 // Defines a struct containing the fl instance, mrb instance, and mrb state named mrb_fltk_##name##_context
 // Also defines the mrb datatype for the fl_instance wrapper
+// This acts as a has_and_belongs_to relationship (Ruby <1-1> Context <1-1> FLTK)
 #define CONTEXT_DEFINE(name, fl_class)                                                       \
   typedef struct {                                                                           \
     fl_class *fl_instance;                                                                   \
