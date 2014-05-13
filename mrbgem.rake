@@ -15,6 +15,7 @@ MRuby::Gem::Specification.new('mruby-fltk') do |spec|
   spec.linker.flags << flags
   spec.linker.libraries << libraries
   
+  # Compile mrb_fltk before any others
   source_files = Dir.glob("#{dir}/src/*.{c,cpp,m,asm,S}")
   mrb_fltk_path = source_files.find { |path| path =~ /mrb_fltk\.cpp$/ }
   source_files.delete(mrb_fltk_path)

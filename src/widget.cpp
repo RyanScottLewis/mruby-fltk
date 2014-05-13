@@ -1,3 +1,7 @@
+#include <Fl/Fl_Widget.h>
+
+#include "helpers.h"
+
 IMPLEMENT_WIDGET_INITIALIZE_METHOD( widget, Fl_Widget );
 
 static void

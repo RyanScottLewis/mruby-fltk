@@ -1,12 +1,14 @@
 #include <mruby.h>
 // #include <mruby/variable.h>
 //
-// #include "mrb_fltk.h"
-// #include "widget.h"
+#include "mrb_fltk.h"
+#include "widget.h"
 
 // =-=- FLTK::Browser -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=
 
 IMPLEMENT_WIDGET_INITIALIZE_METHOD( browser, Fl_Browser );
+
+IMPLEMENT_FIXNUM_ATTRIBUTE_ACCESSOR( browser, value, Fl_Browser, value );
 
 // FLTK::Browser#add(line) Adds a new line to the end of the browser.
 static mrb_value
@@ -155,7 +157,7 @@ mrb_fltk_browser_class_init( mrb_state *mrb ) {
   DEFINE_INSTANCE_METHOD( browser, text, ARGS_REQ( 1 ) | ARGS_OPT( 1 ) );
   DEFINE_INSTANCE_METHOD( browser, icon, ARGS_REQ( 1 ) | ARGS_OPT( 1 ) );
 
-  DEFINE_FIXNUM_ATTRIBUTE_ACCESSOR( widget, value, Fl_Browser, value );
+  DEFINE_FIXNUM_ATTRIBUTE_ACCESSOR( browser, value );
 
   mrb_define_method( mrb, mrb_fltk_widget_class, "column_widths", mrb_fltk_widget_image_get_method, ARGS_NONE() );
   mrb_define_method( mrb, mrb_fltk_widget_class, "column_widths=", mrb_fltk_widget_image_set_method, ARGS_REQ( 1 ) );

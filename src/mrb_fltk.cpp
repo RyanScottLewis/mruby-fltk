@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <memory.h>
 
 #include <Fl/Fl.h>
 
@@ -38,7 +37,7 @@
 #include <mruby/array.h>
 #include <mruby/hash.h>
 #include <mruby/class.h>
-#include <mruby/variable.h>
+// #include <mruby/variable.h>
 
 #include "mrb_fltk.h"
 #include "helpers.h"
@@ -66,13 +65,16 @@
 #include "window.h"
 #include "double_window.h"
 
+static void mrb_fltk_free( mrb_state *mrb, void *p ) {
+  free( p );
+}
+
 // =-=- Contexts -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // TODO: Should be in respective files
 
-CONTEXT_DEFINE( image, Fl_Image );
-CONTEXT_DEFINE( menu_item, Fl_Menu_Item );
-CONTEXT_DEFINE( text_buffer, Fl_Text_Buffer );
-CONTEXT_DEFINE( widget, Fl_Widget );
+// CONTEXT_DEFINE( image, Fl_Image );
+// CONTEXT_DEFINE( menu_item, Fl_Menu_Item );
+// CONTEXT_DEFINE( text_buffer, Fl_Text_Buffer );
 
 // =-=- Gem Hooks -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 

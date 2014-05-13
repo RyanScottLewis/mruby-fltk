@@ -1,6 +1,18 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
+#include <memory.h>
+
+#include <mruby/data.h>
+#include <mruby/variable.h>
+
+#include <Fl/Fl_Widget.h>
+
+#include "mrb_fltk.h"
+#include "helpers.h"
+
+CONTEXT_DEFINE( widget, Widget, Fl_Widget );
+
 static mrb_value mrb_fltk_widget_initialize_method( mrb_state *mrb, mrb_value self );
 static mrb_value mrb_fltk_widget_callback_method( mrb_state *mrb, mrb_value self );
 static mrb_value mrb_fltk_widget_hide_method( mrb_state *mrb, mrb_value self );

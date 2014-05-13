@@ -15,14 +15,13 @@
 // Defines a struct containing the fl instance, mrb instance, and mrb state named mrb_fltk_##name##_context
 // Also defines the mrb datatype for the fl_instance wrapper
 // This acts as a has_and_belongs_to relationship (Ruby <1-1> Context <1-1> FLTK)
-#define CONTEXT_DEFINE( name, fl_class ) \
-  typedef struct {                       \
-    fl_class *fl_instance;               \
-    mrb_value rb_instance;               \
-    mrb_state *mrb;                      \
-  } mrb_fltk_##name##_context;           \
-                                         \
-  static const struct mrb_data_type fltk_##name##_type = { "fltk_" #name, mrb_fltk_free };
+#define CONTEXT_DEFINE( name, rb_class, fl_class ) \
+  typedef struct {                                 \
+    fl_class *fl_instance;                         \
+    mrb_value rb_instance;                         \
+    mrb_state *mrb;                                \
+  } mrb_fltk_##name##_context;                     \
+  static const struct mrb_data_type fltk_##name##_type = { #rb_class, mrb_fltk_free };
 
 // Instance variable `context` is retrieved and unwrapped
 // TODO: Make more flexible! Used in some methods (like setters)
@@ -65,7 +64,7 @@
     CONTEXT_CREATE( widget, context );                                                                                                                                                        \
                                                                                                                                                                                               \
     if( mrb_fltk_arg_check( "o", argc, argv ) ) {                                                                                                                                             \
-      if( strcmp( mrb_obj_classname( mrb, argv[0] ), "fltk_widget" ) )                                                                                                                        \
+      if( strcmp( mrb_obj_classname( mrb, argv[0] ), "Widget" ) )                                                                                                                             \
         mrb_raise( mrb, E_ARGUMENT_ERROR, "invalid argument" );                                                                                                                               \
       mrb_iv_set( mrb, self, mrb_intern_cstr( mrb, "context" ), argv[0] );                                                                                                                    \
                                                                                                                                                                                               \
@@ -138,7 +137,7 @@
 // Implements a reader fixnum attribute for the mrb_fltk_##name##_class Ruby class
 #define IMPLEMENT_FIXNUM_ATTRIBUTE_READER( name, rb_method, fl_class, fl_method )                    \
   static mrb_value mrb_fltk_##name##_##rb_method##_getter_method( mrb_state *mrb, mrb_value self ) { \
-    CONTEXT_SETUP( name );                                                                           \
+    CONTEXT_SETUP( widget );                                                                         \
                                                                                                      \
     return mrb_fixnum_value( ( (fl_class *)context->fl_instance )->fl_method() )                     \
   }
@@ -151,7 +150,7 @@
 // TODO: Should return the new value
 #define IMPLEMENT_FIXNUM_ATTRIBUTE_WRITER( name, rb_method, fl_class, fl_method )                    \
   static mrb_value mrb_fltk_##name##_##rb_method##_setter_method( mrb_state *mrb, mrb_value self ) { \
-    CONTEXT_SETUP( name );                                                                           \
+    CONTEXT_SETUP( widget );                                                                         \
                                                                                                      \
     mrb_value value;                                                                                 \
     mrb_get_args( mrb, "i", &value );                                                                \
@@ -179,7 +178,7 @@
 
 #define IMPLEMENT_STRING_ATTRIBUTE_READER( name, rb_method, fl_class, fl_method )                    \
   static mrb_value mrb_fltk_##name##_##rb_method##_getter_method( mrb_state *mrb, mrb_value self ) { \
-    CONTEXT_SETUP( name );                                                                           \
+    CONTEXT_SETUP( widget );                                                                         \
                                                                                                      \
     const char *value = ( (fl_class *)context->fl_instance )->fl_method();                           \
                                                                                                      \
@@ -192,7 +191,7 @@
 
 #define IMPLEMENT_STRING_ATTRIBUTE_WRITER( name, rb_method, fl_class, fl_method )                    \
   static mrb_value mrb_fltk_##name##_##rb_method##_setter_method( mrb_state *mrb, mrb_value self ) { \
-    CONTEXT_SETUP( name );                                                                           \
+    CONTEXT_SETUP( widget );                                                                         \
                                                                                                      \
     mrb_value value;                                                                                 \
     mrb_get_args( mrb, "S", &value );                                                                \
@@ -236,5 +235,9 @@
 // Defines a class with the name mrb_fltk_##name##_class
 #define DEFINE_CLASS( name, type, super ) \
   struct RClass *mrb_fltk_##name##_class = mrb_define_class_under( mrb, mrb_fltk_class, #type, #super );
+
+// =-=- Function Declarations =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+static void mrb_fltk_free( mrb_state *mrb, void *p );
 
 #endif // MRB_FLTK_H

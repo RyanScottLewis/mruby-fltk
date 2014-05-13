@@ -1,10 +1,4 @@
-static void
-mrb_fltk_free( mrb_state *mrb, void *p ) {
-  free( p );
-}
-
-static bool
-mrb_fltk_arg_check( const char *t, int argc, mrb_value *argv ) {
+static bool mrb_fltk_arg_check( const char *t, int argc, mrb_value *argv ) {
   int n, l = strlen( t );
 
   if( l != argc )
