@@ -25,32 +25,29 @@ In the same light, not all of their static public member functions have been map
     C                     | Ruby                   | Fully Implemented?
     ----------------------|------------------------|--------------------
     Fl                    | FLTK (module)          | 
-    Fl_Box                | FLTK::Box              | 
-    Fl_Button             | FLTK::Button           | 
-    Fl_Check_Button       | FLTK::CheckButton      | 
-    Fl_Double_Window      | FLTK::DoubleWindow     | 
-    Fl_File_Chooser       | FLTK::FileChooser      | 
-    Fl_Image              | FLTK::Image            | 
-    Fl_Input              | FLTK::Input            | 
-    Fl_Light_Button       | FLTK::LightButton      | 
-    Fl_Menu               | FLTK::Menu             | 
-    Fl_Menu_Bar           | FLTK::MenuBar          | 
-    Fl_Menu_Button        | FLTK::MenuButton       | 
-    Fl_Radio_Button       | FLTK::RadioButton      | 
-    Fl_Radio_Light_Button | FLTK::RadioLightButton | 
-    Fl_Radio_Round_Button | FLTK::RadioRoundButton | 
-    Fl_Repeat_Button      | FLTK::RepeatButton     | 
-    Fl_Return_Button      | FLTK::ReturnButton     | 
-    Fl_Round_Button       | FLTK::RoundButton      | 
-    Fl_Select_Browser     | FLTK::SelectBrowser    | 
-    Fl_Shared_Image       | FLTK::SharedImage      | 
-    Fl_Text_Display       | FLTK::TextDisplay      | 
-    Fl_Text_Editor        | FLTK::TextEditor       | 
-    Fl_Toggle_Button      | FLTK::ToggleButton     | 
-    Fl_Value_Output       | FLTK::ValueOutput      | 
+    Fl_Group              | FLTK::Group            | 
+    Fl_Widget             | FLTK::Widget           | 
     Fl_Window             | FLTK::Window           | 
 
 ### Unimplemented
+
+#### Up Next
+
+    Fl_Button
+    Fl_Check_Button
+    Fl_Double_Window
+    Fl_File_Chooser
+    Fl_Image
+    Fl_Input
+    Fl_Menu
+    Fl_Menu_Bar
+    Fl_Menu_Button
+    Fl_Radio_Button
+    Fl_Select_Browser
+    Fl_Text_Display
+    Fl_Text_Editor
+
+#### The Rest
 
     Fl_Adjuster
     Fl_Bitmap
@@ -95,7 +92,6 @@ In the same light, not all of their static public member functions have been map
     Fl_Gl_Window
     Fl_Graphics_Driver
     Fl_Graphics_Driver::matrix
-    Fl_Group
     Fl_Help_Block
     Fl_Help_Dialog
     Fl_Help_Font_Stack
@@ -112,6 +108,7 @@ In the same light, not all of their static public member functions have been map
     Fl_Int_Input
     Fl_JPEG_Image
     Fl_Label
+    Fl_Light_Button
     Fl_Line_Dial
     Fl_Mac_App_Menu
     Fl_Menu_Item
@@ -142,13 +139,19 @@ In the same light, not all of their static public member functions have been map
     Fl_Printer
     Fl_Progress
     Fl_Quartz_Graphics_Driver
+    Fl_Radio_Light_Button
+    Fl_Radio_Round_Button
+    Fl_Repeat_Button
+    Fl_Return_Button
     Fl_RGB_Image
     Fl_Roller
+    Fl_Round_Button
     Fl_Round_Clock
     Fl_Scroll
     Fl_Scrollbar
     Fl_Secret_Input
     Fl_Select_Browser
+    Fl_Shared_Image
     Fl_Simple_Counter
     Fl_Single_Window
     Fl_Slider
@@ -166,6 +169,7 @@ In the same light, not all of their static public member functions have been map
     Fl_Tile
     Fl_Tiled_Image
     Fl_Timer
+    Fl_Toggle_Button
     Fl_Tooltip
     Fl_Tree
     Fl_Tree_Item
@@ -173,8 +177,8 @@ In the same light, not all of their static public member functions have been map
     Fl_Tree_Prefs
     Fl_Valuator
     Fl_Value_Input
+    Fl_Value_Output
     Fl_Value_Slider
-    Fl_Widget
     Fl_Widget_Tracker
     Fl_Wizard
     Fl_XBM_Image

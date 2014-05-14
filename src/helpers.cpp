@@ -1,4 +1,12 @@
-static bool mrb_fltk_arg_check( const char *t, int argc, mrb_value *argv ) {
+#include <string.h>
+
+#include <mruby.h>
+
+void mrb_fltk_free( mrb_state *mrb, void *p ) {
+  mrb_free( mrb, p );
+}
+
+bool mrb_fltk_arg_check( const char *t, int argc, mrb_value *argv ) {
   int n, l = strlen( t );
 
   if( l != argc )

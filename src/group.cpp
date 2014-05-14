@@ -1,9 +1,16 @@
-IMPLEMENT_HIDDEN_OBJECT_INITIALIZE_METHOD( group, widget );
+#include <mruby.h>
+#include <mruby/data.h>
+
+#include <Fl/Fl_Group.h>
+
+#include "macros.h"
+#include "helpers.h"
+#include "widget.h"
+#include "group.h"
 
 // FLTK::Group#begin
-static mrb_value
-mrb_fltk_group_begin_method( mrb_state *mrb, mrb_value self ) {
-  CONTEXT_SETUP( widget );
+mrb_value mrb_fltk_group_begin_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_group, Fl_Group );
 
   mrb_value block = mrb_nil_value();
 
@@ -14,67 +21,67 @@ mrb_fltk_group_begin_method( mrb_state *mrb, mrb_value self ) {
 
     args[0] = self;
 
-    ( (Fl_Group *)context->fl_instance )->begin();
+    fl_group->begin();
     mrb_yield_argv( mrb, block, 1, args );
-    ( (Fl_Group *)context->fl_instance )->end();
+    fl_group->end();
   } else {
-    ( (Fl_Group *)context->fl_instance )->begin();
+    fl_group->begin();
   }
 
   return mrb_nil_value();
 }
 
 // FLTK::Group#end
-static mrb_value
-mrb_fltk_group_end_method( mrb_state *mrb, mrb_value self ) {
-  CONTEXT_SETUP( widget );
+mrb_value mrb_fltk_group_end_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_group, Fl_Group );
 
-  ( (Fl_Group *)context->fl_instance )->end();
+  fl_group->end();
 
   return mrb_nil_value();
 }
 
 // FLTK::Group#resizable
-static mrb_value
-mrb_fltk_group_resizable_get_method( mrb_state *mrb, mrb_value self ) {
-  CONTEXT_SETUP( widget );
+mrb_value mrb_fltk_group_resizable_getter_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_group, Fl_Group );
 
-  struct RClass *mrb_fltk_class = mrb_class_get( mrb, "FLTK" );
-  struct RClass *mrb_fltk_widget_class = mrb_class_ptr( mrb_const_get( mrb, mrb_obj_value( mrb_fltk_class ), mrb_intern_cstr( mrb, "Widget" ) ) );
+  Fl_Widget *fl_widget = fl_group->resizable();
 
-  mrb_value args[1];
+  struct RClass *mrb_fltk_module = mrb_class_get( mrb, "FLTK" );
+  struct RClass *mrb_fltk_widget_class = mrb_class_get_under( mrb, mrb_fltk_module, "Widget" );
 
-  args[0] = mrb_obj_value(
-    Data_Wrap_Struct( mrb, mrb->object_class, &fltk_widget_type, (void *)( (Fl_Group *)context->fl_instance )->resizable() ) );
-
-  return mrb_class_new_instance( mrb, 1, args, mrb_fltk_widget_class );
+  return mrb_obj_value( Data_Wrap_Struct( mrb, mrb_fltk_widget_class, &mrb_fltk_widget_type, (void *)fl_widget ) );
 }
 
 // FLTK::Group#resizable=(widget)
 // Set the resizing box for the group
-static mrb_value
-mrb_fltk_group_resizable_set_method( mrb_state *mrb, mrb_value self ) {
-  CONTEXT_SETUP( widget );
+mrb_value mrb_fltk_group_resizable_setter_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_group, Fl_Group );
 
-  mrb_value arg;
-  mrb_get_args( mrb, "o", &arg );
+  mrb_value mrb_widget;
+  mrb_get_args( mrb, "o", &mrb_widget );
 
-  mrb_value arg_value_context = mrb_iv_get( mrb, arg, mrb_intern_cstr( mrb, "context" ) );
+  // TODO: Raise error unless is a FLTK::Widget
 
-  mrb_fltk_widget_context *arg_context;
-  Data_Get_Struct( mrb, arg_value_context, &fltk_widget_type, arg_context );
+  Fl_Widget *fl_widget;
+  Data_Get_Struct( mrb, mrb_widget, &mrb_fltk_widget_type, fl_widget );
 
-  ( (Fl_Group *)context->fl_instance )->resizable( arg_context->fl_instance );
+  fl_group->resizable( fl_widget );
 
-  return mrb_nil_value();
+  return mrb_widget;
 }
 
-void
-mrb_fltk_group_class_init( mrb_state *mrb ) {
+void mrb_fltk_group_class_init( mrb_state *mrb ) {
   ARENA_SAVE;
 
-  DEFINE_CLASS( group, "Group", mrb_fltk_widget_class );
-  DEFINE_GROUP_INSTANCE_METHODS( group );
+  struct RClass *mrb_fltk_module = mrb_class_get( mrb, "FLTK" );
+  struct RClass *mrb_fltk_widget_class = mrb_class_get_under( mrb, mrb_fltk_module, "Widget" );
+
+  DEFINE_CLASS( group, Group, mrb_fltk_widget_class );
+
+  DEFINE_INSTANCE_METHOD( group, begin, MRB_ARGS_NONE() | MRB_ARGS_BLOCK() );
+  DEFINE_INSTANCE_METHOD( group, end, MRB_ARGS_NONE() );
+
+  DEFINE_INSTANCE_METHOD_ACCESSOR( group, resizable );
 
   ARENA_RESTORE;
 }
