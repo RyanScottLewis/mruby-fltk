@@ -9,6 +9,8 @@ Lots of code was borrowed from [mattn/mruby-fltk3](https://github.com/mattn/mrub
 > NOTE: Not yet released!  
 > **Do not use until it is on the list of [MRuby Gems](http://www.mruby.org/libraries/) and this notice is gone.**
 
+This is a direct port of the C code, so you can use the official documentation for FLTK.
+
 ## Method Names
 
 A few method names have been renamed to make them less ambiguous such as renaming ambiguous methods like `w` and `h` to `width` and `height`
@@ -199,6 +201,7 @@ Feel free to fork, implement, and send a pull request for any of these widgets!
 * Macro or Function for `if ( strcmp( mrb_obj_classname(mrb, argv[0]), "fltk_widget" ) ) mrb_raise(mrb, E_ARGUMENT_ERROR, "invalid argument")`
 * Macro for getter/setter methods (`mrb_fltk_something_attribute_(get|set)`)
 * Function for `struct RClass *mrb_fltk_text_buffer_class = mrb_class_ptr( mrb_const_get( mrb, mrb_obj_value(mrb_fltk_class), mrb_intern_cstr( mrb, "TextBuffer" ) ) );`
+* Instance variable get/set macros
 
 ## Contributing
 

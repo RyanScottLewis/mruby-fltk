@@ -6,6 +6,7 @@
 
 #include "macros.h"
 #include "helpers.h"
+#include "widget.h"
 
 IMPLEMENT_FIXNUM_ATTRIBUTE_READER( widget, height, Fl_Widget, h );
 IMPLEMENT_FIXNUM_ATTRIBUTE_READER( widget, width, Fl_Widget, w );
@@ -13,39 +14,57 @@ IMPLEMENT_FIXNUM_ATTRIBUTE_READER( widget, x, Fl_Widget, x );
 IMPLEMENT_FIXNUM_ATTRIBUTE_READER( widget, y, Fl_Widget, y );
 IMPLEMENT_STRING_ATTRIBUTE_READER( widget, label, Fl_Widget, label );
 
-// void
-// _mrb_fltk_widget_callback( Fl_Widget *v, void *data ) {
-//   mrb_value args[2];
-//
-//   mrb_fltk_widget_context *context = (mrb_fltk_widget_context *)data;
-//   mrb_state *mrb = context->mrb;
-//   mrb_value proc = mrb_iv_get( mrb, context->rb_instance, mrb_intern_cstr( mrb, "callback" ) );
-//   mrb_value value = mrb_iv_get( mrb, context->rb_instance, mrb_intern_cstr( mrb, "value" ) );
-//   args[0] = context->rb_instance;
-//   args[1] = value;
-//
-//   mrb_yield_argv( mrb, proc, 2, args );
-// }
+typedef struct {
+  mrb_state *mrb;
+  mrb_value self;
+} mrb_fltk_widget_callback_context;
+
+void mrb_fltk_widget_callback_function( Fl_Widget *fl_widget, void *data ) {
+
+  printf( "22222222222222\n" );
+  mrb_value args[1];
+  printf( "3333333333333333\n" );
+  mrb_fltk_widget_callback_context *context = (mrb_fltk_widget_callback_context *)data;
+  printf( "44444444444444444\n" );
+  mrb_p( context->mrb, mrb_str_new_cstr( context->mrb, "Hello vverld" ) );
+  printf( "55555555555555555\n" );
+  mrb_value callback = mrb_iv_get( context->mrb, context->self, mrb_intern_cstr( context->mrb, "callback" ) );
+  printf( "666666666666666666\n" );
+
+  args[0] = context->self;
+
+  mrb_yield_argv( context->mrb, callback, 1, args );
+  printf( "77777777777777777\n" );
+}
 
 // FLTK::Widget#callback
 // Gets or sets the current callback function for the widget.
-// mrb_value
-// mrb_fltk_widget_callback_method( mrb_state *mrb, mrb_value self ) { // TODO: Make this more Ruby-ish! And the variables are ambiguous
-//   GET_DATA( fl_widget, Fl_Widget );
-//
-//   mrb_value b = mrb_nil_value();
-//   mrb_value v = mrb_nil_value();
-//
-//   mrb_get_args( mrb, "&|o", &b, &v );
-//
-//   if( !mrb_nil_p( b ) ) {
-//     mrb_iv_set( mrb, self, mrb_intern_cstr( mrb, "callback" ), b );
-//     mrb_iv_set( mrb, self, mrb_intern_cstr( mrb, "value" ), v );
-//
-//     fl_widget->callback( _mrb_fltk_widget_callback, context );
-//   }
-//   return mrb_nil_value();
-// }
+mrb_value mrb_fltk_widget_callback_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_widget, Fl_Widget );
+
+  mrb_value block = mrb_nil_value();
+
+  mrb_get_args( mrb, "&", &block );
+
+  if( !mrb_nil_p( block ) ) {
+
+    mrb_iv_set( mrb, self, mrb_intern_cstr( mrb, "callback" ), block );
+
+    mrb_fltk_widget_callback_context context;
+    context.mrb = mrb;
+    context.self = self;
+
+    printf( "111111111111111\n" );
+
+    fl_widget->callback( mrb_fltk_widget_callback_function, &context );
+
+    return self;
+  } else {
+    mrb_value callback = mrb_iv_get( mrb, self, mrb_intern_cstr( mrb, "callback" ) );
+
+    return mrb_nil_value();
+  }
+}
 
 // FLTK::Widget#image
 // Gets the image that is used as part of the widget label.
@@ -133,7 +152,7 @@ void mrb_fltk_widget_class_init( mrb_state *mrb ) {
 
   DEFINE_CLASS( widget, Widget, mrb->object_class );
 
-  // DEFINE_INSTANCE_METHOD( widget, callback, ARGS_OPT( 1 ) );
+  DEFINE_INSTANCE_METHOD( widget, callback, ARGS_OPT( 1 ) );
   DEFINE_INSTANCE_METHOD( widget, redraw, ARGS_NONE() );
   DEFINE_INSTANCE_METHOD( widget, show, ARGS_NONE() );
   DEFINE_INSTANCE_METHOD( widget, hide, ARGS_NONE() );

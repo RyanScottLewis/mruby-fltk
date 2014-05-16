@@ -19,12 +19,12 @@ mrb_value mrb_fltk_window_initialize_instance_method( mrb_state *mrb, mrb_value 
 
   mrb_get_args( mrb, "*", &argv, &argc );
 
-  if( mrb_fltk_arg_check( "iis", argc, argv ) ) {
+  if( mrb_fltk_arg_check( "iis", argc, argv ) ) { // width, height, title
     fl_window = new Fl_Window( (int)mrb_fixnum( argv[0] ), (int)mrb_fixnum( argv[1] ), RSTRING_PTR( argv[2] ) );
-  } else if( mrb_fltk_arg_check( "iiiis", argc, argv ) ) {
+  } else if( mrb_fltk_arg_check( "iiiis", argc, argv ) ) { // x, y, width, height, title
     fl_window = new Fl_Window( (int)mrb_fixnum( argv[0] ), (int)mrb_fixnum( argv[1] ), (int)mrb_fixnum( argv[2] ), (int)mrb_fixnum( argv[3] ), RSTRING_PTR( argv[4] ) );
   } else {
-    mrb_raise( mrb, E_ARGUMENT_ERROR, "invalid argument" );
+    mrb_raise( mrb, E_ARGUMENT_ERROR, "invalid argument" ); // TODO: Error should show valid arguments
 
     return mrb_nil_value(); // NOTE: Won't reach here but shut's up compiler warnings
   }
