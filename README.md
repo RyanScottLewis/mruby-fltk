@@ -9,7 +9,7 @@ Lots of code was borrowed from [mattn/mruby-fltk3](https://github.com/mattn/mrub
 > NOTE: Not yet released!  
 > **Do not use until it is on the list of [MRuby Gems](http://www.mruby.org/libraries/) and this notice is gone.**
 
-This is a direct port of the C code, so you can use the official documentation for FLTK.
+This is an almost direct port of the C code, so you can use the official documentation for FLTK.
 
 ## Compatibility Notes
 
