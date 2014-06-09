@@ -8,7 +8,6 @@
 
 DEFINE_DATA_TYPE( box, Box );
 
-mrb_value mrb_fltk_box_initialize_instance_method( mrb_state *mrb, mrb_value self );
 void mrb_fltk_box_class_init( mrb_state *mrb );
 
 #endif // BOX_H
