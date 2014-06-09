@@ -3,6 +3,7 @@
 
 #include <mruby/data.h>
 
+#include "helpers.h"
 #include "macros.h"
 
 DEFINE_DATA_TYPE( window, Window );

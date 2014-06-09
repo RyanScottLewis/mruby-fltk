@@ -31,13 +31,15 @@ mrb_value mrb_fltk_window_initialize_instance_method( mrb_state *mrb, mrb_value 
 
   SETUP_DATA_POINTER( fl_window );
 
+  Fl_Group::current( 0 ); // Prevent new widgets from being added to a group
+
   return self;
 }
 
 // FLTK::Window#show
 // TODO: Should return true if it worked, false if it didnt
 mrb_value mrb_fltk_window_show_instance_method( mrb_state *mrb, mrb_value self ) {
-  GET_DATA( fl_window, Fl_Window );
+  GET_DATA( fl_window, Fl_Window, self );
 
   fl_window->show();
 
