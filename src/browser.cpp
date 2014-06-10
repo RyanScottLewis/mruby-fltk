@@ -1,6 +1,7 @@
 #include <mruby.h>
 #include <mruby/data.h>
 #include <mruby/string.h>
+#include <mruby/array.h>
 
 #include <Fl/Fl_Browser.h>
 
@@ -61,6 +62,72 @@ mrb_value mrb_fltk_browser_clear_instance_method( mrb_state *mrb, mrb_value self
   return self;
 }
 
+// FLTK::Browser#column_char()
+// Gets the current column separator character.
+mrb_value mrb_fltk_browser_column_char_getter_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_browser, Fl_Browser, self );
+
+  char fl_column_char = fl_browser->column_char();
+
+  if( fl_column_char ) {
+    char column_char[1] = { fl_column_char };
+
+    return mrb_str_new_cstr( mrb, column_char ); // FIXME: This gives strange output. Got "\t0\703qZ\777\177", should be "\t"
+  } else {
+    return mrb_nil_value();
+  }
+}
+
+// FLTK::Browser#column_char=(value)
+// Sets the current column separator character.
+mrb_value mrb_fltk_browser_column_char_setter_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_browser, Fl_Browser, self );
+
+  mrb_value value;
+  mrb_get_args( mrb, "S", &value );
+  value = mrb_str_resize( mrb, value, 1 );
+
+  fl_browser->column_char( mrb_str_to_cstr( mrb, value )[0] );
+
+  return self; // TODO: Real value
+}
+
+// FLTK::Browser#column_widths()
+// Gets the current column width array.
+mrb_value mrb_fltk_browser_column_widths_getter_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_browser, Fl_Browser, self );
+
+  const int *fl_column_widths = fl_browser->column_widths();
+  int fl_column_widths_length = sizeof( fl_column_widths ) / sizeof( int );
+  mrb_value mrb_column_widths = mrb_ary_new( mrb );
+
+  for( size_t i = 0; i < fl_column_widths_length; ++i )
+    mrb_ary_push( mrb, mrb_column_widths, mrb_fixnum_value( fl_column_widths[i] ) );
+
+  return mrb_column_widths;
+}
+
+// FLTK::Browser#column_widths=(values)
+// Sets the current column width array.
+mrb_value mrb_fltk_browser_column_widths_setter_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_browser, Fl_Browser, self );
+
+  mrb_value value;
+  mrb_get_args( mrb, "A", &value );
+
+  // TODO: convert all values to Ints using collect(&:to_i)
+
+  mrb_int value_length = mrb_ary_len( mrb, value );
+  mrb_int column_widths[value_length];
+
+  for( size_t i = 0; i < value_length; ++i )
+    column_widths[i] = mrb_fixnum( mrb_ary_entry( value, i ) );
+
+  fl_browser->column_widths( column_widths );
+
+  return self; // TODO: Real value
+}
+
 // TODO: Should be more ruby-ish?
 // TODO: Needs to handle invalid index and null data
 // FLTK::Browser#data(line)
@@ -83,7 +150,7 @@ mrb_value mrb_fltk_browser_data_instance_method( mrb_state *mrb, mrb_value self 
 }
 
 // FLTK::Browser#text(index)
-// Get text
+// Get text of line at index.
 mrb_value mrb_fltk_browser_text_instance_method( mrb_state *mrb, mrb_value self ) {
   GET_DATA( fl_browser, Fl_Browser, self );
 
@@ -91,6 +158,19 @@ mrb_value mrb_fltk_browser_text_instance_method( mrb_state *mrb, mrb_value self 
   mrb_get_args( mrb, "i", &index );
 
   return mrb_str_new_cstr( mrb, fl_browser->text( index ) );
+}
+
+// FLTK::Browser#remove(index)
+// Remove the line at index.
+mrb_value mrb_fltk_browser_remove_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_browser, Fl_Browser, self );
+
+  mrb_int index;
+  mrb_get_args( mrb, "i", &index );
+
+  fl_browser->data( index );
+
+  return self;
 }
 
 // FLTK::Button#value
@@ -110,7 +190,10 @@ void mrb_fltk_browser_class_init( mrb_state *mrb ) {
 
   DEFINE_INSTANCE_METHOD( browser, add, MRB_ARGS_REQ( 1 ) );
   DEFINE_INSTANCE_METHOD( browser, clear, MRB_ARGS_NONE() );
+  DEFINE_INSTANCE_METHOD_ACCESSOR( browser, column_char );
+  DEFINE_INSTANCE_METHOD_ACCESSOR( browser, column_widths );
   DEFINE_INSTANCE_METHOD( browser, data, MRB_ARGS_ARG( 1, 1 ) );
+  DEFINE_INSTANCE_METHOD( browser, remove, MRB_ARGS_REQ( 1 ) );
   DEFINE_INSTANCE_METHOD( browser, text, MRB_ARGS_REQ( 1 ) );
   DEFINE_INSTANCE_METHOD_ACCESSOR( browser, value );
 
