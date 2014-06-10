@@ -151,6 +151,14 @@ mrb_value mrb_fltk_browser_data_instance_method( mrb_state *mrb, mrb_value self 
   }
 }
 
+// FLTK::Browser#size()
+// Get how many lines in the browser.
+mrb_value mrb_fltk_browser_size_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_browser, Fl_Browser, self );
+
+  return mrb_fixnum_value( fl_browser->size() );
+}
+
 // FLTK::Browser#text(index)
 // Get text of line at index.
 mrb_value mrb_fltk_browser_text_instance_method( mrb_state *mrb, mrb_value self ) {
@@ -170,9 +178,9 @@ mrb_value mrb_fltk_browser_remove_instance_method( mrb_state *mrb, mrb_value sel
   mrb_int index;
   mrb_get_args( mrb, "i", &index );
 
-  fl_browser->data( index );
+  fl_browser->remove( index );
 
-  return self;
+  return self; // TODO: Should return the value at index?
 }
 
 // FLTK::Button#value
@@ -196,6 +204,7 @@ void mrb_fltk_browser_class_init( mrb_state *mrb ) {
   DEFINE_INSTANCE_METHOD_ACCESSOR( browser, column_widths );
   DEFINE_INSTANCE_METHOD( browser, data, MRB_ARGS_ARG( 1, 1 ) );
   DEFINE_INSTANCE_METHOD( browser, remove, MRB_ARGS_REQ( 1 ) );
+  DEFINE_INSTANCE_METHOD( browser, size, MRB_ARGS_NONE() );
   DEFINE_INSTANCE_METHOD( browser, text, MRB_ARGS_REQ( 1 ) );
   DEFINE_INSTANCE_METHOD_ACCESSOR( browser, value );
 
