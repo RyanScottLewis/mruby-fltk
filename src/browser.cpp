@@ -129,7 +129,7 @@ mrb_value mrb_fltk_browser_column_widths_setter_instance_method( mrb_state *mrb,
 }
 
 // TODO: Should be more ruby-ish?
-// TODO: Needs to handle invalid index and null data
+// TODO: Needs to handle invalid index and null data! FIXME SEGFAULT when index is out of range
 // FLTK::Browser#data(line)
 // FLTK::Browser#data(line)
 // Gets or sets the data object for the given line.
@@ -145,7 +145,9 @@ mrb_value mrb_fltk_browser_data_instance_method( mrb_state *mrb, mrb_value self 
 
     return data;
   } else {
-    return mrb_obj_value( fl_browser->data( index ) );
+    void *data = fl_browser->data( index );
+
+    return data ? mrb_obj_value( data ) : mrb_nil_value();
   }
 }
 
