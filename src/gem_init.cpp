@@ -11,6 +11,8 @@
 #include "box.h"
 
 #include "button.h"
+#include "enter_button.h"
+
 #include "input.h"
 // #include "value_output.h"
 
@@ -51,6 +53,8 @@ void mrb_mruby_fltk_gem_init( mrb_state *mrb ) {
   mrb_fltk_box_class_init( mrb );
 
   mrb_fltk_button_class_init( mrb );
+  mrb_fltk_enter_button_class_init( mrb );
+
   mrb_fltk_input_class_init( mrb );
   // mrb_fltk_value_output_class_init( mrb );
 
