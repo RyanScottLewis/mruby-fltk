@@ -1,4 +1,5 @@
 #include <mruby.h>
+#include <mruby/data.h>
 
 #include <Fl/Fl.h>
 #include <Fl/Fl_draw.h>
@@ -22,6 +23,31 @@ mrb_value mrb_fltk_event_key_module_method( mrb_state *mrb, mrb_value self ) {
       return mrb_false_value();
     }
   }
+}
+
+// FLTK.focus
+// Gets the current focused widget.
+mrb_value mrb_fltk_focus_getter_module_method( mrb_state *mrb, mrb_value self ) {
+  // TODO: I dunno how to go about this.
+  //  Find the MRB instance wrapping the pointer
+  //    Problem is that this seems impossible
+  // OR
+  //  Get the MRB class based on the pointer, set the DATA_PTR, and initialize it
+  //    Problem is this works unless you want to retrieve a MRB subclass of that object. For example, I have a `class Sidebar < FLTK::HoldBrowser`.
+}
+
+// FLTK.focus=(widget)
+// Sets the current focused widget.
+mrb_value mrb_fltk_focus_setter_module_method( mrb_state *mrb, mrb_value self ) {
+  mrb_value mrb_widget;
+  mrb_get_args( mrb, "o", &mrb_widget );
+  // TODO: Raise error unless it is a FLTK::Widget
+
+  GET_DATA( fl_widget, Fl_Widget, mrb_widget );
+
+  Fl::focus( fl_widget );
+
+  return mrb_widget;
 }
 
 // FLTK.run
@@ -123,6 +149,7 @@ void mrb_fltk_module_init( mrb_state *mrb ) {
 
   // DEFINE_MODULE_METHOD( root, font_name, MRB_ARGS_REQ( 1 ) );
   mrb_define_module_function( mrb, mrb_fltk_module, "run", mrb_fltk_run_module_method, MRB_ARGS_NONE() );
+  mrb_define_module_function( mrb, mrb_fltk_module, "focus=", mrb_fltk_focus_setter_module_method, MRB_ARGS_REQ( 1 ) );
   // DEFINE_MODULE_METHOD( root, set_fonts, MRB_ARGS_REQ( 1 ) );
 
   ARENA_RESTORE;
