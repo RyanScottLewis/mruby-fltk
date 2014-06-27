@@ -53,7 +53,7 @@ mrb_value mrb_fltk_native_file_chooser_filename_instance_method( mrb_state *mrb,
   const char *filename;
 
   if( mrb_nil_p( mrb_index ) ) {
-    filename = fl_native_file_chooser->filename();
+    filename = fl_native_file_chooser->filename( 0 );
   } else {
     filename = fl_native_file_chooser->filename( mrb_fixnum( mrb_index ) );
   }
