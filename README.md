@@ -36,18 +36,20 @@ Note that not all classes are fully implemented yet.
 This means that not all of their public member functions have been mapped to instance methods on the Ruby side.
 In the same light, not all of their static public member functions have been mapped to class methods.
 
-    C                     | Ruby                   | Fully Implemented?
-    ----------------------|------------------------|--------------------
-    Fl                    | FLTK (module)          | 
-    Fl_Box                | FLTK::Box              | 
-    Fl_Browser            | FLTK::Browser          | 
-    Fl_Button             | FLTK::Button           | 
-    Fl_Group              | FLTK::Group            | 
-    Fl_HoldBrowser        | FLTK::HoldBrowser      | 
-    Fl_Pack               | FLTK::Pack             | 
-    Fl_SelectBrowser      | FLTK::SelectBrowser    | 
-    Fl_Widget             | FLTK::Widget           | 
-    Fl_Window             | FLTK::Window           | 
+    C                      | Ruby                    | Fully Implemented?
+    -----------------------|-------------------------|--------------------
+    Fl                     | FLTK (module)           | 
+    Fl_Box                 | FLTK::Box               | 
+    Fl_Browser             | FLTK::Browser           | 
+    Fl_Button              | FLTK::Button            | 
+    Fl_Group               | FLTK::Group             | 
+    Fl_HoldBrowser         | FLTK::HoldBrowser       | 
+    Fl_Input               | FLTK::Input             | 
+    Fl_Native_File_Chooser | FLTK::NativeFileChooser | √
+    Fl_Pack                | FLTK::Pack              | 
+    Fl_SelectBrowser       | FLTK::SelectBrowser     | 
+    Fl_Widget              | FLTK::Widget            | 
+    Fl_Window              | FLTK::Window            | 
 
 ### Unimplemented
 
@@ -109,7 +111,6 @@ In the same light, not all of their static public member functions have been map
     Fl_Hor_Slider
     Fl_Hor_Value_Slider
     Fl_Image
-    Fl_Input
     Fl_Input_Choice
     Fl_Int_Input
     Fl_JPEG_Image
@@ -126,7 +127,6 @@ In the same light, not all of their static public member functions have been map
     Fl_Multiline_Output
     Fl_Multi_Browser
     Fl_Multi_Label
-    Fl_Native_File_Chooser
     Fl_Nice_Slider
     Fl_Output
     Fl_Overlay_Window
