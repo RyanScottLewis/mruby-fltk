@@ -52,8 +52,6 @@
 
 // =-=- Fixnum Attribute Macros =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=
 
-// =-=- Reader
-
 // Implements a reader fixnum attribute for the mrb_fltk_##name##_class Ruby class
 #define IMPLEMENT_FIXNUM_ATTRIBUTE_READER( name, rb_method, fl_class, fl_method )                      \
   mrb_value mrb_fltk_##name##_##rb_method##_getter_instance_method( mrb_state *mrb, mrb_value self ) { \
@@ -61,12 +59,6 @@
                                                                                                        \
     return mrb_fixnum_value( fl_instance->fl_method() );                                               \
   }
-
-// Defines a reader fixnum attribute on the mrb_fltk_##name##_class Ruby class
-#define DEFINE_FIXNUM_ATTRIBUTE_READER( name, rb_method ) \
-  mrb_define_method( mrb, mrb_fltk_##name##_class, #rb_method, mrb_fltk_##name##_##rb_method##_getter_instance_method, MRB_ARGS_NONE() );
-
-// =-=- Writer
 
 // Implements a reader fixnum attribute for the mrb_fltk_##name##_class Ruby class
 // TODO: Should return nil if fl_method was nil
@@ -82,25 +74,12 @@
     return value;                                                                                      \
   }
 
-// Defines a writer fixnum attribute on the mrb_fltk_##name##_class Ruby class
-#define DEFINE_FIXNUM_ATTRIBUTE_WRITER( name, rb_method ) \
-  mrb_define_method( mrb, mrb_fltk_##name##_class, #rb_method "=", mrb_fltk_##name##_##rb_method##_setter_instance_method, MRB_ARGS_REQ( 1 ) );
-
-// =-=- Accessor
-
 // Implements a reader/writer fixnum attribute on the mrb_fltk_##name##_class Ruby class
 #define IMPLEMENT_FIXNUM_ATTRIBUTE_ACCESSOR( name, rb_method, fl_class, fl_method ) \
   IMPLEMENT_FIXNUM_ATTRIBUTE_READER( name, rb_method, fl_class, fl_method );        \
   IMPLEMENT_FIXNUM_ATTRIBUTE_WRITER( name, rb_method, fl_class, fl_method );
 
-// Defines a reader/writer fixnum attribute on the mrb_fltk_##name##_class Ruby class
-#define DEFINE_FIXNUM_ATTRIBUTE_ACCESSOR( name, rb_method ) \
-  DEFINE_FIXNUM_ATTRIBUTE_READER( name, rb_method );        \
-  DEFINE_FIXNUM_ATTRIBUTE_WRITER( name, rb_method );
-
 // =-=- String Attribute Macros =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=
-
-// =-=- Reader
 
 // TODO: Why const char?
 #define IMPLEMENT_STRING_ATTRIBUTE_READER( name, rb_method, fl_class, fl_method )                      \
@@ -111,12 +90,6 @@
                                                                                                        \
     return value ? mrb_str_new_cstr( mrb, value ) : mrb_nil_value();                                   \
   }
-
-// Defines a reader string attribute on the mrb_fltk_##name##_class Ruby class
-#define DEFINE_STRING_ATTRIBUTE_READER( name, rb_method ) \
-  mrb_define_method( mrb, mrb_fltk_##name##_class, #rb_method, mrb_fltk_##name##_##rb_method##_getter_instance_method, MRB_ARGS_NONE() );
-
-// =-=- Writer
 
 #define IMPLEMENT_STRING_ATTRIBUTE_WRITER( name, rb_method, fl_class, fl_method )                      \
   mrb_value mrb_fltk_##name##_##rb_method##_setter_instance_method( mrb_state *mrb, mrb_value self ) { \
@@ -130,20 +103,9 @@
     return value;                                                                                      \
   }
 
-// Defines a writer string attribute on the mrb_fltk_##name##_class Ruby class
-#define DEFINE_STRING_ATTRIBUTE_WRITER( name, rb_method, fl_class, fl_method ) \
-  mrb_define_method( mrb, mrb_fltk_##name##_class, #rb_method "=", mrb_fltk_##name##_##rb_method##_setter_instance_method, MRB_ARGS_REQ( 1 ) );
-
-// =-=- Accessor
-
 // Implements a reader/writer string attribute on the mrb_fltk_##name##_class Ruby class
 #define IMPLEMENT_STRING_ATTRIBUTE_ACCESSOR( name, rb_method, fl_class, fl_method ) \
   IMPLEMENT_STRING_ATTRIBUTE_READER( name, rb_method, fl_class, fl_method );        \
   IMPLEMENT_STRING_ATTRIBUTE_WRITER( name, rb_method, fl_class, fl_method );
-
-// Defines a reader/writer string attribute on the mrb_fltk_##name##_class Ruby class
-#define DEFINE_STRING_ATTRIBUTE_ACCESSOR( name, rb_method ) \
-  DEFINE_STRING_ATTRIBUTE_READER( name, rb_method );        \
-  DEFINE_STRING_ATTRIBUTE_WRITER( name, rb_method );
 
 #endif // MACROS_H

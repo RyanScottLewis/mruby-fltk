@@ -212,7 +212,6 @@ void mrb_fltk_widget_class_init( mrb_state *mrb ) {
 
   DEFINE_INSTANCE_METHOD( widget, activate, MRB_ARGS_NONE() );
   DEFINE_INSTANCE_METHOD_ACCESSOR( widget, align );
-  // DEFINE_FIXNUM_ATTRIBUTE_ACCESSOR( widget, box, Fl_Widget, box );
   DEFINE_INSTANCE_METHOD( widget, callback, MRB_ARGS_OPT( 1 ) );
   DEFINE_INSTANCE_METHOD( widget, deactivate, MRB_ARGS_NONE() );
   DEFINE_INSTANCE_METHOD_GETTER( widget, height );
@@ -220,7 +219,6 @@ void mrb_fltk_widget_class_init( mrb_state *mrb ) {
   DEFINE_INSTANCE_METHOD_ACCESSOR( widget, label );
   DEFINE_INSTANCE_METHOD_ACCESSOR( widget, label_font );
   DEFINE_INSTANCE_METHOD_ACCESSOR( widget, label_size );
-  // DEFINE_FIXNUM_ATTRIBUTE_ACCESSOR( widget, label_size, Fl_Widget, labelsize );
   DEFINE_INSTANCE_METHOD( widget, parent, MRB_ARGS_NONE() );
   DEFINE_INSTANCE_METHOD( widget, redraw, MRB_ARGS_NONE() );
   DEFINE_INSTANCE_METHOD( widget, show, MRB_ARGS_NONE() );
