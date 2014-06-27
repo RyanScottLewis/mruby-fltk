@@ -32,10 +32,10 @@
   mrb_define_method( mrb, mrb_fltk_##symbol, #name, mrb_fltk_##symbol##_##name##_instance_method, arguments );
 
 #define DEFINE_INSTANCE_METHOD_GETTER( symbol, name ) \
-  mrb_define_method( mrb, mrb_fltk_##symbol, #name, mrb_fltk_##symbol##_##name##_getter_instance_method, ARGS_NONE() );
+  mrb_define_method( mrb, mrb_fltk_##symbol, #name, mrb_fltk_##symbol##_##name##_getter_instance_method, MRB_ARGS_NONE() );
 
 #define DEFINE_INSTANCE_METHOD_SETTER( symbol, name ) \
-  mrb_define_method( mrb, mrb_fltk_##symbol, #name "=", mrb_fltk_##symbol##_##name##_setter_instance_method, ARGS_REQ( 1 ) );
+  mrb_define_method( mrb, mrb_fltk_##symbol, #name "=", mrb_fltk_##symbol##_##name##_setter_instance_method, MRB_ARGS_REQ( 1 ) );
 
 #define DEFINE_INSTANCE_METHOD_ACCESSOR( symbol, name ) \
   DEFINE_INSTANCE_METHOD_GETTER( symbol, name )         \
@@ -64,7 +64,7 @@
 
 // Defines a reader fixnum attribute on the mrb_fltk_##name##_class Ruby class
 #define DEFINE_FIXNUM_ATTRIBUTE_READER( name, rb_method ) \
-  mrb_define_method( mrb, mrb_fltk_##name##_class, #rb_method, mrb_fltk_##name##_##rb_method##_getter_instance_method, ARGS_NONE() );
+  mrb_define_method( mrb, mrb_fltk_##name##_class, #rb_method, mrb_fltk_##name##_##rb_method##_getter_instance_method, MRB_ARGS_NONE() );
 
 // =-=- Writer
 
@@ -84,7 +84,7 @@
 
 // Defines a writer fixnum attribute on the mrb_fltk_##name##_class Ruby class
 #define DEFINE_FIXNUM_ATTRIBUTE_WRITER( name, rb_method ) \
-  mrb_define_method( mrb, mrb_fltk_##name##_class, #rb_method "=", mrb_fltk_##name##_##rb_method##_setter_instance_method, ARGS_REQ( 1 ) );
+  mrb_define_method( mrb, mrb_fltk_##name##_class, #rb_method "=", mrb_fltk_##name##_##rb_method##_setter_instance_method, MRB_ARGS_REQ( 1 ) );
 
 // =-=- Accessor
 
@@ -132,7 +132,7 @@
 
 // Defines a writer string attribute on the mrb_fltk_##name##_class Ruby class
 #define DEFINE_STRING_ATTRIBUTE_WRITER( name, rb_method, fl_class, fl_method ) \
-  mrb_define_method( mrb, mrb_fltk_##name##_class, #rb_method "=", mrb_fltk_##name##_##rb_method##_setter_instance_method, ARGS_REQ( 1 ) );
+  mrb_define_method( mrb, mrb_fltk_##name##_class, #rb_method "=", mrb_fltk_##name##_##rb_method##_setter_instance_method, MRB_ARGS_REQ( 1 ) );
 
 // =-=- Accessor
 

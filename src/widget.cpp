@@ -210,29 +210,29 @@ void mrb_fltk_widget_class_init( mrb_state *mrb ) {
 
   DEFINE_CLASS( widget, Widget, mrb->object_class );
 
-  DEFINE_INSTANCE_METHOD( widget, activate, ARGS_NONE() );
+  DEFINE_INSTANCE_METHOD( widget, activate, MRB_ARGS_NONE() );
   DEFINE_INSTANCE_METHOD_ACCESSOR( widget, align );
   // DEFINE_FIXNUM_ATTRIBUTE_ACCESSOR( widget, box, Fl_Widget, box );
-  DEFINE_INSTANCE_METHOD( widget, callback, ARGS_OPT( 1 ) );
-  DEFINE_INSTANCE_METHOD( widget, deactivate, ARGS_NONE() );
+  DEFINE_INSTANCE_METHOD( widget, callback, MRB_ARGS_OPT( 1 ) );
+  DEFINE_INSTANCE_METHOD( widget, deactivate, MRB_ARGS_NONE() );
   DEFINE_INSTANCE_METHOD_GETTER( widget, height );
-  DEFINE_INSTANCE_METHOD( widget, hide, ARGS_NONE() );
+  DEFINE_INSTANCE_METHOD( widget, hide, MRB_ARGS_NONE() );
   DEFINE_INSTANCE_METHOD_ACCESSOR( widget, label );
   DEFINE_INSTANCE_METHOD_ACCESSOR( widget, label_font );
   DEFINE_INSTANCE_METHOD_ACCESSOR( widget, label_size );
   // DEFINE_FIXNUM_ATTRIBUTE_ACCESSOR( widget, label_size, Fl_Widget, labelsize );
-  DEFINE_INSTANCE_METHOD( widget, parent, ARGS_NONE() );
-  DEFINE_INSTANCE_METHOD( widget, redraw, ARGS_NONE() );
-  DEFINE_INSTANCE_METHOD( widget, show, ARGS_NONE() );
-  DEFINE_INSTANCE_METHOD( widget, take_focus, ARGS_NONE() );
-  mrb_define_method( mrb, mrb_fltk_widget, "visible?", mrb_fltk_widget_visible_instance_method, ARGS_NONE() ); // TODO: DEFINE_INSTANCE_QUERY_METHOD macro
+  DEFINE_INSTANCE_METHOD( widget, parent, MRB_ARGS_NONE() );
+  DEFINE_INSTANCE_METHOD( widget, redraw, MRB_ARGS_NONE() );
+  DEFINE_INSTANCE_METHOD( widget, show, MRB_ARGS_NONE() );
+  DEFINE_INSTANCE_METHOD( widget, take_focus, MRB_ARGS_NONE() );
+  mrb_define_method( mrb, mrb_fltk_widget, "visible?", mrb_fltk_widget_visible_instance_method, MRB_ARGS_NONE() ); // TODO: DEFINE_INSTANCE_QUERY_METHOD macro
   DEFINE_INSTANCE_METHOD_ACCESSOR( widget, when );
   DEFINE_INSTANCE_METHOD_GETTER( widget, width );
   DEFINE_INSTANCE_METHOD_GETTER( widget, x );
   DEFINE_INSTANCE_METHOD_GETTER( widget, y );
 
-  // mrb_define_method( mrb, mrb_fltk_widget_class, "image", mrb_fltk_widget_image_getter_instance_method, ARGS_NONE() );
-  // mrb_define_method( mrb, mrb_fltk_widget_class, "image=", mrb_fltk_widget_image_setter_instance_method, ARGS_REQ( 1 ) );
+  // mrb_define_method( mrb, mrb_fltk_widget_class, "image", mrb_fltk_widget_image_getter_instance_method, MRB_ARGS_NONE() );
+  // mrb_define_method( mrb, mrb_fltk_widget_class, "image=", mrb_fltk_widget_image_setter_instance_method, MRB_ARGS_REQ( 1 ) );
 
   ARENA_RESTORE;
 }

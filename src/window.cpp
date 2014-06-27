@@ -55,7 +55,7 @@ void mrb_fltk_window_class_init( mrb_state *mrb ) {
   DEFINE_CLASS( window, Window, mrb_fltk_group_class );
 
   DEFINE_INSTANCE_METHOD( window, initialize, ARGS_ANY() );
-  DEFINE_INSTANCE_METHOD( window, show, ARGS_OPT( 1 ) );
+  DEFINE_INSTANCE_METHOD( window, show, MRB_ARGS_OPT( 1 ) );
 
   ARENA_RESTORE;
 }
