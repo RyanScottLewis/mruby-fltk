@@ -152,6 +152,16 @@ mrb_value mrb_fltk_widget_show_instance_method( mrb_state *mrb, mrb_value self )
   return self;
 }
 
+// FLTK::Widget#take_focus
+// Gives the widget the keyboard focus.
+mrb_value mrb_fltk_widget_take_focus_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_widget, Fl_Widget, self );
+
+  fl_widget->take_focus();
+
+  return self;
+}
+
 // FLTK::Widget#visible?
 // Returns whether a widget is visible.
 mrb_value mrb_fltk_widget_visible_instance_method( mrb_state *mrb, mrb_value self ) {
@@ -194,6 +204,7 @@ void mrb_fltk_widget_class_init( mrb_state *mrb ) {
   DEFINE_INSTANCE_METHOD( widget, parent, ARGS_NONE() );
   DEFINE_INSTANCE_METHOD( widget, redraw, ARGS_NONE() );
   DEFINE_INSTANCE_METHOD( widget, show, ARGS_NONE() );
+  DEFINE_INSTANCE_METHOD( widget, take_focus, ARGS_NONE() );
   mrb_define_method( mrb, mrb_fltk_widget, "visible?", mrb_fltk_widget_visible_instance_method, ARGS_NONE() ); // TODO: DEFINE_INSTANCE_QUERY_METHOD macro
   DEFINE_INSTANCE_METHOD_ACCESSOR( widget, when );
   DEFINE_INSTANCE_METHOD_GETTER( widget, width );
