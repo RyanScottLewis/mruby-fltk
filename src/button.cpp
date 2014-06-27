@@ -9,7 +9,7 @@
 #include "widget.h"
 #include "button.h"
 
-// FLTK::Window#initialize
+// FLTK::Button#initialize
 mrb_value mrb_fltk_button_initialize_instance_method( mrb_state *mrb, mrb_value self ) {
   SETUP_DATA_TYPE( button );
 
