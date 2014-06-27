@@ -12,6 +12,16 @@
 #include "widget.h"
 #include "group.h"
 
+// FLTK::Widget#activate
+// Activate the widget.
+mrb_value mrb_fltk_widget_activate_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_widget, Fl_Widget, self );
+
+  fl_widget->activate();
+
+  return self;
+}
+
 // FLTK::Widget#align
 // FLTK::Widget#align=(value)
 IMPLEMENT_FIXNUM_ATTRIBUTE_ACCESSOR( widget, align, Fl_Widget, align );
@@ -56,6 +66,16 @@ mrb_value mrb_fltk_widget_callback_instance_method( mrb_state *mrb, mrb_value se
   }
 
   return block;
+}
+
+// FLTK::Widget#deactivate
+// Activate the widget.
+mrb_value mrb_fltk_widget_deactivate_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_widget, Fl_Widget, self );
+
+  fl_widget->deactivate();
+
+  return self;
 }
 
 // FLTK::Widget#height
@@ -128,8 +148,6 @@ IMPLEMENT_FIXNUM_ATTRIBUTE_ACCESSOR( widget, label_size, Fl_Widget, labelsize );
 // FLTK::Widget#parent
 // Returns the parent widget
 mrb_value mrb_fltk_widget_parent_instance_method( mrb_state *mrb, mrb_value self ) {
-  GET_DATA( fl_widget, Fl_Widget, self ); // TODO: Needed?
-
   return mrb_iv_get( mrb, self, mrb_intern_cstr( mrb, "parent" ) );
 }
 
@@ -192,9 +210,11 @@ void mrb_fltk_widget_class_init( mrb_state *mrb ) {
 
   DEFINE_CLASS( widget, Widget, mrb->object_class );
 
+  DEFINE_INSTANCE_METHOD( widget, activate, ARGS_NONE() );
   DEFINE_INSTANCE_METHOD_ACCESSOR( widget, align );
   // DEFINE_FIXNUM_ATTRIBUTE_ACCESSOR( widget, box, Fl_Widget, box );
   DEFINE_INSTANCE_METHOD( widget, callback, ARGS_OPT( 1 ) );
+  DEFINE_INSTANCE_METHOD( widget, deactivate, ARGS_NONE() );
   DEFINE_INSTANCE_METHOD_GETTER( widget, height );
   DEFINE_INSTANCE_METHOD( widget, hide, ARGS_NONE() );
   DEFINE_INSTANCE_METHOD_ACCESSOR( widget, label );
