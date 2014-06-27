@@ -23,8 +23,6 @@ typedef struct {
 } mrb_fltk_widget_callback_context;
 
 // For FLTK::Widget#callback
-// TODO: When to FREE the context struct?
-// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO: Callback get called enough times and BUTTON LABELS change to something crazy. Then eventual segfault
 void mrb_fltk_widget_callback_function( Fl_Widget *fl_widget, void *data ) {
   mrb_fltk_widget_callback_context *context = (mrb_fltk_widget_callback_context *)data;
   mrb_state *mrb = context->mrb;
