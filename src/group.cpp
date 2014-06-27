@@ -100,6 +100,22 @@ mrb_value mrb_fltk_group_resizable_getter_instance_method( mrb_state *mrb, mrb_v
   return mrb_obj_value( Data_Wrap_Struct( mrb, mrb_fltk_widget_class, &mrb_fltk_widget_type, (void *)fl_widget ) );
 }
 
+// FLTK::Group#remove(widget)
+// Remove a widget from this group.
+mrb_value mrb_fltk_group_remove_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_group, Fl_Group, self );
+
+  mrb_value mrb_widget;
+  mrb_get_args( mrb, "o", &mrb_widget );
+
+  // TODO: Raise error unless is a FLTK::Widget
+  GET_DATA( fl_widget, Fl_Widget, mrb_widget );
+
+  fl_group->remove( fl_widget );
+
+  return self;
+}
+
 // FLTK::Group#resizable=(widget)
 // Set the resizing box for the group
 mrb_value mrb_fltk_group_resizable_setter_instance_method( mrb_state *mrb, mrb_value self ) {
@@ -128,6 +144,7 @@ void mrb_fltk_group_class_init( mrb_state *mrb ) {
   DEFINE_INSTANCE_METHOD( group, add, MRB_ARGS_REQ( 1 ) );
   // DEFINE_INSTANCE_METHOD( group, begin, MRB_ARGS_NONE() | MRB_ARGS_BLOCK() );
   // DEFINE_INSTANCE_METHOD( group, end, MRB_ARGS_NONE() );
+  DEFINE_INSTANCE_METHOD( group, remove, MRB_ARGS_REQ( 1 ) );
   DEFINE_INSTANCE_METHOD_ACCESSOR( group, resizable );
 
   ARENA_RESTORE;
