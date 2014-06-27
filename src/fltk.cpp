@@ -34,15 +34,6 @@ mrb_value mrb_fltk_run_module_method( mrb_state *mrb, mrb_value self ) {
   return mrb_fixnum_value( Fl::run() );
 }
 
-// FLTK.set_fonts
-// mrb_value
-// mrb_fltk_set_fonts_module_method( mrb_state *mrb, mrb_value self ) {
-//   mrb_value s;
-//   mrb_get_args( mrb, "S", &s );
-//
-//   return mrb_fixnum_value( Fl::set_fonts( RSTRING_PTR( s ) ) );
-// }
-
 void mrb_fltk_module_init( mrb_state *mrb ) {
   ARENA_SAVE;
 
@@ -95,6 +86,16 @@ void mrb_fltk_module_init( mrb_state *mrb ) {
   DEFINE_FIXNUM_CONSTANT( BOLD, FL_BOLD, mrb_fltk_module );                                   // add this to helvetica, courier, or times
   DEFINE_FIXNUM_CONSTANT( ITALIC, FL_ITALIC, mrb_fltk_module );                               // add this to helvetica, courier, or times
   DEFINE_FIXNUM_CONSTANT( BOLD_ITALIC, FL_BOLD_ITALIC, mrb_fltk_module );                     // add this to helvetica, courier, or times
+
+  // Fl_When
+  DEFINE_FIXNUM_CONSTANT( WHEN_NEVER, FL_WHEN_NEVER, mrb_fltk_module );                         // Never call the callback.
+  DEFINE_FIXNUM_CONSTANT( WHEN_CHANGED, FL_WHEN_CHANGED, mrb_fltk_module );                     // Do the callback only when the widget value changes.
+  DEFINE_FIXNUM_CONSTANT( WHEN_NOT_CHANGED, FL_WHEN_NOT_CHANGED, mrb_fltk_module );             // Do the callback whenever the user interacts with the widget.
+  DEFINE_FIXNUM_CONSTANT( WHEN_RELEASE, FL_WHEN_RELEASE, mrb_fltk_module );                     // Do the callback when the button or key is released and the value changes.
+  DEFINE_FIXNUM_CONSTANT( WHEN_RELEASE_ALWAYS, FL_WHEN_RELEASE_ALWAYS, mrb_fltk_module );       // Do the callback when the button or key is released, even if the value doesn't change.
+  DEFINE_FIXNUM_CONSTANT( WHEN_ENTER_KEY, FL_WHEN_ENTER_KEY, mrb_fltk_module );                 // Do the callback when the user presses the ENTER key and the value changes.
+  DEFINE_FIXNUM_CONSTANT( WHEN_ENTER_KEY_ALWAYS, FL_WHEN_ENTER_KEY_ALWAYS, mrb_fltk_module );   // Do the callback when the user presses the ENTER key, even if the value doesn't change.
+  DEFINE_FIXNUM_CONSTANT( WHEN_ENTER_KEY_CHANGED, FL_WHEN_ENTER_KEY_CHANGED, mrb_fltk_module ); // ?
 
   // DEFINE_MODULE_METHOD( root, font_name, MRB_ARGS_REQ( 1 ) );
   mrb_define_module_function( mrb, mrb_fltk_module, "run", mrb_fltk_run_module_method, MRB_ARGS_NONE() );

@@ -130,7 +130,7 @@ IMPLEMENT_FIXNUM_ATTRIBUTE_ACCESSOR( widget, label_size, Fl_Widget, labelsize );
 // FLTK::Widget#parent
 // Returns the parent widget
 mrb_value mrb_fltk_widget_parent_instance_method( mrb_state *mrb, mrb_value self ) {
-  GET_DATA( fl_widget, Fl_Widget, self );
+  GET_DATA( fl_widget, Fl_Widget, self ); // TODO: Needed?
 
   return mrb_iv_get( mrb, self, mrb_intern_cstr( mrb, "parent" ) );
 }
@@ -162,6 +162,12 @@ mrb_value mrb_fltk_widget_visible_instance_method( mrb_state *mrb, mrb_value sel
   return fl_widget->visible() ? mrb_true_value() : mrb_false_value();
 }
 
+// FLTK::Widget#when
+// Returns the conditions under which the callback is called.
+// FLTK::Widget#when=(value)
+// Sets the flags used to decide when a callback is called.
+IMPLEMENT_FIXNUM_ATTRIBUTE_ACCESSOR( widget, when, Fl_Widget, when );
+
 // FLTK::Widget#width
 IMPLEMENT_FIXNUM_ATTRIBUTE_READER( widget, width, Fl_Widget, w );
 
@@ -191,6 +197,7 @@ void mrb_fltk_widget_class_init( mrb_state *mrb ) {
   DEFINE_INSTANCE_METHOD( widget, redraw, ARGS_NONE() );
   DEFINE_INSTANCE_METHOD( widget, show, ARGS_NONE() );
   mrb_define_method( mrb, mrb_fltk_widget, "visible?", mrb_fltk_widget_visible_instance_method, ARGS_NONE() ); // TODO: DEFINE_INSTANCE_QUERY_METHOD macro
+  DEFINE_INSTANCE_METHOD_ACCESSOR( widget, when );
   DEFINE_INSTANCE_METHOD_GETTER( widget, width );
   DEFINE_INSTANCE_METHOD_GETTER( widget, x );
   DEFINE_INSTANCE_METHOD_GETTER( widget, y );
