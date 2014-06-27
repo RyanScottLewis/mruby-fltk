@@ -97,6 +97,35 @@ void mrb_fltk_module_init( mrb_state *mrb ) {
   DEFINE_FIXNUM_CONSTANT( WHEN_ENTER_KEY_ALWAYS, FL_WHEN_ENTER_KEY_ALWAYS, mrb_fltk_module );   // Do the callback when the user presses the ENTER key, even if the value doesn't change.
   DEFINE_FIXNUM_CONSTANT( WHEN_ENTER_KEY_CHANGED, FL_WHEN_ENTER_KEY_CHANGED, mrb_fltk_module ); // ?
 
+  // Fl_Event
+  DEFINE_FIXNUM_CONSTANT( NO_EVENT, FL_NO_EVENT, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( PUSH, FL_PUSH, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( RELEASE, FL_RELEASE, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( ENTER, FL_ENTER, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( LEAVE, FL_LEAVE, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( DRAG, FL_DRAG, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( FOCUS, FL_FOCUS, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( UNFOCUS, FL_UNFOCUS, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( KEYDOWN, FL_KEYDOWN, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( KEYBOARD, FL_KEYBOARD, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( KEYUP, FL_KEYUP, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( CLOSE, FL_CLOSE, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( MOVE, FL_MOVE, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( SHORTCUT, FL_SHORTCUT, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( DEACTIVATE, FL_DEACTIVATE, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( ACTIVATE, FL_ACTIVATE, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( HIDE, FL_HIDE, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( SHOW, FL_SHOW, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( PASTE, FL_PASTE, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( SELECTIONCLEAR, FL_SELECTIONCLEAR, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( MOUSEWHEEL, FL_MOUSEWHEEL, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( DND_ENTER, FL_DND_ENTER, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( DND_DRAG, FL_DND_DRAG, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( DND_LEAVE, FL_DND_LEAVE, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( DND_RELEASE, FL_DND_RELEASE, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( SCREEN_CONFIGURATION_CHANGED, FL_SCREEN_CONFIGURATION_CHANGED, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( FULLSCREEN, FL_FULLSCREEN, mrb_fltk_module );
+
   // DEFINE_MODULE_METHOD( root, font_name, MRB_ARGS_REQ( 1 ) );
   mrb_define_module_function( mrb, mrb_fltk_module, "run", mrb_fltk_run_module_method, MRB_ARGS_NONE() );
   // DEFINE_MODULE_METHOD( root, set_fonts, MRB_ARGS_REQ( 1 ) );
