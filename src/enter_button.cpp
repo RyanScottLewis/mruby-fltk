@@ -12,18 +12,20 @@
 #include "enter_button.h"
 
 // A FLTK Button subclass that runs it's callback when the enter key is pressed.
+// TODO: cannot focus correctly when callback is run by pressing Enter, but works fine when clicked.
 class Fl_Enter_Button : public Fl_Button {
 public:
   Fl_Enter_Button( int x, int y, int w, int h, const char *n )
   : Fl_Button( x, y, w, h, n ) {
   }
+
   int handle( int event ) {
-    if( event == FL_KEYDOWN )
-      if( Fl::event_key() == FL_Enter )
-        if( when() & FL_WHEN_ENTER_KEY_ALWAYS ) {
-          do_callback();
-          return 0;
-        }
+    if( event == FL_KEYDOWN && Fl::event_key() == FL_Enter ) {
+      do_callback();
+
+      return 0;
+    }
+
     return Fl_Button::handle( event );
   }
 };
