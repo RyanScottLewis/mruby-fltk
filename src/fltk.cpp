@@ -6,28 +6,23 @@
 #include "macros.h"
 #include "helpers.h"
 
-// FLTK.font_name
-// mrb_value
-// mrb_fltk_font_name_module_method( mrb_state *mrb, mrb_value self ) {
-//   mrb_value i;
-//   mrb_get_args( mrb, "i", &i );
-//
-//   int font_type = 0;
-//
-//   const char *name = Fl::get_font_name( (Fl::Font)mrb_fixnum( i ), &font_type );
-//
-//   return name ? mrb_str_new_cstr( mrb, name ) : mrb_nil_value();
-// }
+// FLTK.event_key(key=nil)
+// Gets which key on the keyboard was last pushed.
+// If a key is given, returns true if the given key was held down (or pressed) during the last event.
+mrb_value mrb_fltk_event_key_module_method( mrb_state *mrb, mrb_value self ) {
+  mrb_value key;
+  mrb_get_args( mrb, "i", &key );
 
-// FLTK.fl_height
-// mrb_value mrb_fltk_fl_height_module_method( mrb_state *mrb, mrb_value self ) {
-//   mrb_value font_name, font_size;
-//   mrb_get_args( mrb, "ii", &font_name, &font_size );
-//
-//   int result = fl_font( mrb_fixnum( font_name ), mrb_fixnum( font_size ) );
-//
-//   return mrb_fixnum_value( result );
-// }
+  if( mrb_nil_p( key ) ) {
+    return mrb_fixnum_value( Fl::event_key() );
+  } else {
+    if( Fl::event_key( mrb_fixnum( key ) ) ) {
+      return mrb_true_value();
+    } else {
+      return mrb_false_value();
+    }
+  }
+}
 
 // FLTK.run
 mrb_value mrb_fltk_run_module_method( mrb_state *mrb, mrb_value self ) {
