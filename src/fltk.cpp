@@ -1,5 +1,7 @@
 #include <mruby.h>
 #include <mruby/data.h>
+#include <mruby/hash.h>
+#include <mruby/string.h>
 
 #include <Fl/Fl.h>
 #include <Fl/Fl_draw.h>
@@ -50,9 +52,51 @@ mrb_value mrb_fltk_focus_setter_module_method( mrb_state *mrb, mrb_value self ) 
   return mrb_widget;
 }
 
+// FLTK.font
+// FLTK.font(font_face, font_size)
+// Gets or sets the current font, which is then used in various drawing routines.
+mrb_value mrb_fltk_font_module_method( mrb_state *mrb, mrb_value self ) {
+  mrb_value mrb_face, mrb_size;
+  mrb_get_args( mrb, "|ii", &mrb_face, &mrb_size );
+
+  if( mrb_nil_p( mrb_face ) || mrb_nil_p( mrb_size ) ) {
+    fl_font( mrb_fixnum( mrb_face ), mrb_fixnum( mrb_size ) );
+
+    return self;
+  } else {
+    return mrb_fixnum_value( fl_font() );
+  }
+}
+
+// FLTK.measure(text)
+// Get the width and height of a string, according to the last call to FLTK.font.
+mrb_value mrb_fltk_measure_module_method( mrb_state *mrb, mrb_value self ) {
+  int width = 0;
+  int height = 0;
+  char *text;
+  mrb_get_args( mrb, "z", &text );
+
+  fl_measure( text, width, height );
+
+  mrb_value result = mrb_hash_new( mrb );
+  mrb_hash_set( mrb, result, mrb_symbol_value( mrb_intern_cstr( mrb, "width" ) ), mrb_fixnum_value( width ) );
+  mrb_hash_set( mrb, result, mrb_symbol_value( mrb_intern_cstr( mrb, "height" ) ), mrb_fixnum_value( height ) );
+
+  return result;
+}
+
 // FLTK.run
 mrb_value mrb_fltk_run_module_method( mrb_state *mrb, mrb_value self ) {
   return mrb_fixnum_value( Fl::run() );
+}
+
+// FLTK.width(text)
+// Get the width of a string.
+mrb_value mrb_fltk_width_module_method( mrb_state *mrb, mrb_value self ) {
+  char *text;
+  mrb_get_args( mrb, "z", &text );
+
+  return mrb_fixnum_value( fl_width( text ) );
 }
 
 void mrb_fltk_module_init( mrb_state *mrb ) {
@@ -147,9 +191,63 @@ void mrb_fltk_module_init( mrb_state *mrb ) {
   DEFINE_FIXNUM_CONSTANT( SCREEN_CONFIGURATION_CHANGED, FL_SCREEN_CONFIGURATION_CHANGED, mrb_fltk_module );
   DEFINE_FIXNUM_CONSTANT( FULLSCREEN, FL_FULLSCREEN, mrb_fltk_module );
 
+  // Fl_Boxtype
+  DEFINE_FIXNUM_CONSTANT( NO_BOX, FL_NO_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( FLAT_BOX, FL_FLAT_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( UP_BOX, FL_UP_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( DOWN_BOX, FL_DOWN_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( UP_FRAME, FL_UP_FRAME, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( DOWN_FRAME, FL_DOWN_FRAME, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( THIN_UP_BOX, FL_THIN_UP_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( THIN_DOWN_BOX, FL_THIN_DOWN_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( THIN_UP_FRAME, FL_THIN_UP_FRAME, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( THIN_DOWN_FRAME, FL_THIN_DOWN_FRAME, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( ENGRAVED_BOX, FL_ENGRAVED_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( EMBOSSED_BOX, FL_EMBOSSED_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( ENGRAVED_FRAME, FL_ENGRAVED_FRAME, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( EMBOSSED_FRAME, FL_EMBOSSED_FRAME, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( BORDER_BOX, FL_BORDER_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( SHADOW_BOX, _FL_SHADOW_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( BORDER_FRAME, FL_BORDER_FRAME, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( SHADOW_FRAME, _FL_SHADOW_FRAME, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( ROUNDED_BOX, _FL_ROUNDED_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( RSHADOW_BOX, _FL_RSHADOW_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( ROUNDED_FRAME, _FL_ROUNDED_FRAME, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( RFLAT_BOX, _FL_RFLAT_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( ROUND_UP_BOX, _FL_ROUND_UP_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( ROUND_DOWN_BOX, _FL_ROUND_DOWN_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( DIAMOND_UP_BOX, _FL_DIAMOND_UP_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( DIAMOND_DOWN_BOX, _FL_DIAMOND_DOWN_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( OVAL_BOX, _FL_OVAL_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( OSHADOW_BOX, _FL_OSHADOW_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( OVAL_FRAME, _FL_OVAL_FRAME, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( OFLAT_BOX, _FL_OFLAT_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( PLASTIC_UP_BOX, _FL_PLASTIC_UP_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( PLASTIC_DOWN_BOX, _FL_PLASTIC_DOWN_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( PLASTIC_UP_FRAME, _FL_PLASTIC_UP_FRAME, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( PLASTIC_DOWN_FRAME, _FL_PLASTIC_DOWN_FRAME, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( PLASTIC_THIN_UP_BOX, _FL_PLASTIC_THIN_UP_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( PLASTIC_THIN_DOWN_BOX, _FL_PLASTIC_THIN_DOWN_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( PLASTIC_ROUND_UP_BOX, _FL_PLASTIC_ROUND_UP_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( PLASTIC_ROUND_DOWN_BOX, _FL_PLASTIC_ROUND_DOWN_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( GTK_UP_BOX, _FL_GTK_UP_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( GTK_DOWN_BOX, _FL_GTK_DOWN_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( GTK_UP_FRAME, _FL_GTK_UP_FRAME, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( GTK_DOWN_FRAME, _FL_GTK_DOWN_FRAME, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( GTK_THIN_UP_BOX, _FL_GTK_THIN_UP_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( GTK_THIN_DOWN_BOX, _FL_GTK_THIN_DOWN_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( GTK_THIN_UP_FRAME, _FL_GTK_THIN_UP_FRAME, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( GTK_THIN_DOWN_FRAME, _FL_GTK_THIN_DOWN_FRAME, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( GTK_ROUND_UP_BOX, _FL_GTK_ROUND_UP_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( GTK_ROUND_DOWN_BOX, _FL_GTK_ROUND_DOWN_BOX, mrb_fltk_module );
+  DEFINE_FIXNUM_CONSTANT( FREE_BOXTYPE, FL_FREE_BOXTYPE, mrb_fltk_module );
+
   // DEFINE_MODULE_METHOD( root, font_name, MRB_ARGS_REQ( 1 ) );
-  mrb_define_module_function( mrb, mrb_fltk_module, "run", mrb_fltk_run_module_method, MRB_ARGS_NONE() );
   mrb_define_module_function( mrb, mrb_fltk_module, "focus=", mrb_fltk_focus_setter_module_method, MRB_ARGS_REQ( 1 ) );
+  mrb_define_module_function( mrb, mrb_fltk_module, "font", mrb_fltk_font_module_method, MRB_ARGS_OPT( 2 ) );
+  mrb_define_module_function( mrb, mrb_fltk_module, "measure", mrb_fltk_measure_module_method, MRB_ARGS_REQ( 1 ) );
+  mrb_define_module_function( mrb, mrb_fltk_module, "run", mrb_fltk_run_module_method, MRB_ARGS_NONE() );
+  mrb_define_module_function( mrb, mrb_fltk_module, "width", mrb_fltk_width_module_method, MRB_ARGS_REQ( 1 ) );
   // DEFINE_MODULE_METHOD( root, set_fonts, MRB_ARGS_REQ( 1 ) );
 
   ARENA_RESTORE;

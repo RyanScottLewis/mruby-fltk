@@ -37,7 +37,7 @@ mrb_value mrb_fltk_hold_browser_initialize_instance_method( mrb_state *mrb, mrb_
 void mrb_fltk_hold_browser_class_init( mrb_state *mrb ) {
   ARENA_SAVE;
 
-  struct RClass *mrb_fltk_module = mrb_class_get( mrb, "FLTK" );
+  struct RClass *mrb_fltk_module = mrb_module_get( mrb, "FLTK" );
   struct RClass *mrb_fltk_browser_class = mrb_class_get_under( mrb, mrb_fltk_module, "Browser" );
 
   DEFINE_CLASS( hold_browser, HoldBrowser, mrb_fltk_browser_class );

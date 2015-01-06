@@ -40,7 +40,7 @@ mrb_value mrb_fltk_group_initialize_instance_method( mrb_state *mrb, mrb_value s
 // FLTK::Group#add(widget)
 // The widget is removed from its current group (if any) and then added to the end of this group.
 mrb_value mrb_fltk_group_add_instance_method( mrb_state *mrb, mrb_value self ) {
-  // TODO: Segfault when adding anything to
+
   GET_DATA( fl_group, Fl_Group, self );
 
   mrb_value mrb_widget;
@@ -94,7 +94,7 @@ mrb_value mrb_fltk_group_resizable_getter_instance_method( mrb_state *mrb, mrb_v
 
   Fl_Widget *fl_widget = fl_group->resizable();
 
-  struct RClass *mrb_fltk_module = mrb_class_get( mrb, "FLTK" );
+  struct RClass *mrb_fltk_module = mrb_module_get( mrb, "FLTK" );
   struct RClass *mrb_fltk_widget_class = mrb_class_get_under( mrb, mrb_fltk_module, "Widget" );
 
   return mrb_obj_value( Data_Wrap_Struct( mrb, mrb_fltk_widget_class, &mrb_fltk_widget_type, (void *)fl_widget ) );
@@ -135,7 +135,7 @@ mrb_value mrb_fltk_group_resizable_setter_instance_method( mrb_state *mrb, mrb_v
 void mrb_fltk_group_class_init( mrb_state *mrb ) {
   ARENA_SAVE;
 
-  struct RClass *mrb_fltk_module = mrb_class_get( mrb, "FLTK" );
+  struct RClass *mrb_fltk_module = mrb_module_get( mrb, "FLTK" );
   struct RClass *mrb_fltk_widget_class = mrb_class_get_under( mrb, mrb_fltk_module, "Widget" );
 
   DEFINE_CLASS( group, Group, mrb_fltk_widget_class );

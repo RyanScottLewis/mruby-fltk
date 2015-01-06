@@ -45,20 +45,25 @@ IMPLEMENT_STRING_ATTRIBUTE_READER( native_file_chooser, error_message, Fl_Native
 // FLTK::NativeFileChooser#filename(index=nil)
 // Return the filename the user choose. If index is given, return one of the filenames the user selected.
 mrb_value mrb_fltk_native_file_chooser_filename_instance_method( mrb_state *mrb, mrb_value self ) {
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
+  // Segfaults! Wowza
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
   GET_DATA( fl_native_file_chooser, Fl_Native_File_Chooser, self );
 
   mrb_value mrb_index;
   mrb_get_args( mrb, "|i", &mrb_index );
 
-  const char *filename;
+  mrb_value mrb_filename;
 
   if( mrb_nil_p( mrb_index ) ) {
-    filename = fl_native_file_chooser->filename( 0 );
+    mrb_filename = mrb_str_new_cstr( mrb, fl_native_file_chooser->filename() );
   } else {
-    filename = fl_native_file_chooser->filename( mrb_fixnum( mrb_index ) );
+    mrb_filename = mrb_str_new_cstr( mrb, fl_native_file_chooser->filename( mrb_fixnum( mrb_index ) ) );
   }
-
-  return mrb_str_new_cstr( mrb, filename );
+  printf( "-==--==--==-=-=-=-=-=-=-=-=--=-=-=----------\n" );
+  mrb_p( mrb, mrb_filename );
+  printf( "-==--==--==-=-=-=-=-=-=-=-=--=-=-=----------\n" );
+  return mrb_filename;
 }
 // FLTK::NativeFileChooser#filter
 // Returns the filter string last set.
@@ -107,7 +112,7 @@ IMPLEMENT_FIXNUM_ATTRIBUTE_ACCESSOR( native_file_chooser, type, Fl_Native_File_C
 void mrb_fltk_native_file_chooser_class_init( mrb_state *mrb ) {
   ARENA_SAVE;
 
-  struct RClass *mrb_fltk_module = mrb_class_get( mrb, "FLTK" );
+  struct RClass *mrb_fltk_module = mrb_module_get( mrb, "FLTK" );
 
   DEFINE_CLASS( native_file_chooser, NativeFileChooser, mrb->object_class );
 

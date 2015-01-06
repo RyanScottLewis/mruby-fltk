@@ -69,7 +69,7 @@
     mrb_value value;                                                                                   \
     mrb_get_args( mrb, "i", &value );                                                                  \
                                                                                                        \
-    fl_instance->fl_method( mrb_fixnum( value ) );                                                     \
+    fl_instance->fl_method( (int)mrb_fixnum( value ) );                                                \
                                                                                                        \
     return value;                                                                                      \
   }

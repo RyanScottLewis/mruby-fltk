@@ -56,7 +56,7 @@ mrb_value mrb_fltk_enter_button_initialize_instance_method( mrb_state *mrb, mrb_
 void mrb_fltk_enter_button_class_init( mrb_state *mrb ) {
   ARENA_SAVE;
 
-  struct RClass *mrb_fltk_module = mrb_class_get( mrb, "FLTK" );
+  struct RClass *mrb_fltk_module = mrb_module_get( mrb, "FLTK" );
   struct RClass *mrb_fltk_button_class = mrb_class_get_under( mrb, mrb_fltk_module, "Button" );
 
   DEFINE_CLASS( enter_button, EnterButton, mrb_fltk_button_class );

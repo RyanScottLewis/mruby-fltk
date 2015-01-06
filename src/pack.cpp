@@ -34,15 +34,25 @@ mrb_value mrb_fltk_pack_initialize_instance_method( mrb_state *mrb, mrb_value se
   return self;
 }
 
+// FLTK::Pack#spacing
+// Gets the number of extra pixels of blank space that are added between the children.
+// FLTK::Pack#spacing=(value)
+// Sets the number of extra pixels of blank space that are added between the children.
+IMPLEMENT_FIXNUM_ATTRIBUTE_ACCESSOR( pack, spacing, Fl_Pack, spacing );
+
 void mrb_fltk_pack_class_init( mrb_state *mrb ) {
   ARENA_SAVE;
 
-  struct RClass *mrb_fltk_module = mrb_class_get( mrb, "FLTK" );
+  struct RClass *mrb_fltk_module = mrb_module_get( mrb, "FLTK" );
   struct RClass *mrb_fltk_group_class = mrb_class_get_under( mrb, mrb_fltk_module, "Group" );
 
   DEFINE_CLASS( pack, Pack, mrb_fltk_group_class );
 
+  DEFINE_FIXNUM_CONSTANT( HORIZONTAL, Fl_Pack::HORIZONTAL, mrb_fltk_pack );
+  DEFINE_FIXNUM_CONSTANT( VERTICAL, Fl_Pack::VERTICAL, mrb_fltk_pack );
+
   DEFINE_INSTANCE_METHOD( pack, initialize, ARGS_ANY() );
+  DEFINE_INSTANCE_METHOD_ACCESSOR( pack, spacing );
 
   ARENA_RESTORE;
 }

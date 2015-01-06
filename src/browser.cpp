@@ -191,7 +191,7 @@ IMPLEMENT_FIXNUM_ATTRIBUTE_ACCESSOR( browser, value, Fl_Browser, value );
 void mrb_fltk_browser_class_init( mrb_state *mrb ) {
   ARENA_SAVE;
 
-  struct RClass *mrb_fltk_module = mrb_class_get( mrb, "FLTK" );
+  struct RClass *mrb_fltk_module = mrb_module_get( mrb, "FLTK" );
   struct RClass *mrb_fltk_group_class = mrb_class_get_under( mrb, mrb_fltk_module, "Group" );
 
   DEFINE_CLASS( browser, Browser, mrb_fltk_group_class );

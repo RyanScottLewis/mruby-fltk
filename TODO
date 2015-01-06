@@ -6,3 +6,9 @@ Macro or Function for `if ( strcmp( mrb_obj_classname(mrb, argv[0]), "fltk_widge
 Macro for getter/setter methods (`mrb_fltk_something_attribute_(get|set)`)
 Function for `struct RClass *mrb_fltk_text_buffer_class = mrb_class_ptr( mrb_const_get( mrb, mrb_obj_value(mrb_fltk_class), mrb_intern_cstr( mrb, "TextBuffer" ) ) );`
 Instance variable get/set macros
+
+Module problem:
+  In latest MRUBY:
+    struct RClass *mrb_fltk_module = mrb_module_get( mrb, "FLTK" );
+  In 1.0.0:
+    struct RClass *mrb_fltk_module = mrb_class_get( mrb, "FLTK" );

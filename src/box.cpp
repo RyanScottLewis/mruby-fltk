@@ -41,7 +41,7 @@ mrb_value mrb_fltk_box_initialize_instance_method( mrb_state *mrb, mrb_value sel
 void mrb_fltk_box_class_init( mrb_state *mrb ) {
   ARENA_SAVE;
 
-  struct RClass *mrb_fltk_module = mrb_class_get( mrb, "FLTK" );
+  struct RClass *mrb_fltk_module = mrb_module_get( mrb, "FLTK" );
   struct RClass *mrb_fltk_widget_class = mrb_class_get_under( mrb, mrb_fltk_module, "Widget" );
 
   DEFINE_CLASS( box, Box, mrb_fltk_widget_class );

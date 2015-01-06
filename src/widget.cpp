@@ -6,6 +6,7 @@
 #include <mruby/string.h>
 
 #include <Fl/Fl_Widget.h>
+#include <Fl/Fl_Group.h>
 
 #include "macros.h"
 #include "helpers.h"
@@ -25,6 +26,25 @@ mrb_value mrb_fltk_widget_activate_instance_method( mrb_state *mrb, mrb_value se
 // FLTK::Widget#align
 // FLTK::Widget#align=(value)
 IMPLEMENT_FIXNUM_ATTRIBUTE_ACCESSOR( widget, align, Fl_Widget, align );
+
+// FLTK::Widget#box
+// Gets the box type.
+IMPLEMENT_FIXNUM_ATTRIBUTE_READER( widget, box, Fl_Widget, box );
+
+// FLTK::Widget#box=(value)
+// Sets the box type.
+// TODO: Tried to use IMPLEMENT_FIXNUM_ATTRIBUTE_ACCESSOR but got this:
+//       candidate function not viable: no known conversion from 'int' to 'Fl_Boxtype' for 1st argument
+mrb_value mrb_fltk_widget_box_setter_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_widget, Fl_Widget, self );
+
+  mrb_value value;
+  mrb_get_args( mrb, "i", &value );
+
+  fl_widget->box( (Fl_Boxtype)mrb_fixnum( value ) );
+
+  return value;
+}
 
 // For FLTK::Widget#callback
 typedef struct {
@@ -80,6 +100,18 @@ mrb_value mrb_fltk_widget_deactivate_instance_method( mrb_state *mrb, mrb_value 
 
 // FLTK::Widget#height
 IMPLEMENT_FIXNUM_ATTRIBUTE_READER( widget, height, Fl_Widget, h );
+
+// FLTK::Widget#height=(value)
+mrb_value mrb_fltk_widget_height_setter_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_widget, Fl_Widget, self );
+
+  mrb_value height;
+  mrb_get_args( mrb, "i", &height );
+
+  fl_widget->size( fl_widget->w(), mrb_fixnum( height ) );
+
+  return height;
+}
 
 // FLTK::Widget#image
 // Gets the image that is used as part of the widget label.
@@ -188,6 +220,31 @@ mrb_value mrb_fltk_widget_visible_instance_method( mrb_state *mrb, mrb_value sel
   return fl_widget->visible() ? mrb_true_value() : mrb_false_value();
 }
 
+// FLTK::Widget#tooltip
+// Gets the current tooltip text.
+// FLTK::Widget#tooltip=(value)
+// Sets the current tooltip text.
+IMPLEMENT_STRING_ATTRIBUTE_ACCESSOR( widget, tooltip, Fl_Widget, tooltip );
+
+// FLTK::Widget#type
+// Gets the widget type.
+IMPLEMENT_FIXNUM_ATTRIBUTE_READER( widget, type, Fl_Widget, type );
+
+// FLTK::Widget#type=(value)
+// Sets the widget type.
+mrb_value mrb_fltk_widget_type_setter_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_widget, Fl_Widget, self );
+
+  mrb_value value;
+  mrb_get_args( mrb, "i", &value );
+
+  fl_widget->type( (int)mrb_fixnum( value ) );
+
+  Fl_Group::current( 0 ); // Prevent new widgets from being added to a group
+
+  return value;
+}
+
 // FLTK::Widget#when
 // Returns the conditions under which the callback is called.
 // FLTK::Widget#when=(value)
@@ -197,24 +254,61 @@ IMPLEMENT_FIXNUM_ATTRIBUTE_ACCESSOR( widget, when, Fl_Widget, when );
 // FLTK::Widget#width
 IMPLEMENT_FIXNUM_ATTRIBUTE_READER( widget, width, Fl_Widget, w );
 
+// FLTK::Widget#width=(value)
+mrb_value mrb_fltk_widget_width_setter_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_widget, Fl_Widget, self );
+
+  mrb_value width;
+  mrb_get_args( mrb, "i", &width );
+
+  fl_widget->size( mrb_fixnum( width ), fl_widget->h() );
+
+  return width;
+}
+
 // FLTK::Widget#x
 IMPLEMENT_FIXNUM_ATTRIBUTE_READER( widget, x, Fl_Widget, x );
+
+// FLTK::Widget#x=(value)
+mrb_value mrb_fltk_widget_x_setter_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_widget, Fl_Widget, self );
+
+  mrb_value x;
+  mrb_get_args( mrb, "i", &x );
+
+  fl_widget->position( mrb_fixnum( x ), fl_widget->y() );
+
+  return x;
+}
 
 // FLTK::Widget#y
 IMPLEMENT_FIXNUM_ATTRIBUTE_READER( widget, y, Fl_Widget, y );
 
+// FLTK::Widget#y=(value)
+mrb_value mrb_fltk_widget_y_setter_instance_method( mrb_state *mrb, mrb_value self ) {
+  GET_DATA( fl_widget, Fl_Widget, self );
+
+  mrb_value y;
+  mrb_get_args( mrb, "i", &y );
+
+  fl_widget->position( fl_widget->x(), mrb_fixnum( y ) );
+
+  return y;
+}
+
 void mrb_fltk_widget_class_init( mrb_state *mrb ) {
   ARENA_SAVE;
 
-  struct RClass *mrb_fltk_module = mrb_class_get( mrb, "FLTK" );
+  struct RClass *mrb_fltk_module = mrb_module_get( mrb, "FLTK" );
 
   DEFINE_CLASS( widget, Widget, mrb->object_class );
 
   DEFINE_INSTANCE_METHOD( widget, activate, MRB_ARGS_NONE() );
   DEFINE_INSTANCE_METHOD_ACCESSOR( widget, align );
+  DEFINE_INSTANCE_METHOD_ACCESSOR( widget, box );
   DEFINE_INSTANCE_METHOD( widget, callback, MRB_ARGS_OPT( 1 ) );
   DEFINE_INSTANCE_METHOD( widget, deactivate, MRB_ARGS_NONE() );
-  DEFINE_INSTANCE_METHOD_GETTER( widget, height );
+  DEFINE_INSTANCE_METHOD_ACCESSOR( widget, height );
   DEFINE_INSTANCE_METHOD( widget, hide, MRB_ARGS_NONE() );
   DEFINE_INSTANCE_METHOD_ACCESSOR( widget, label );
   DEFINE_INSTANCE_METHOD_ACCESSOR( widget, label_font );
@@ -223,11 +317,13 @@ void mrb_fltk_widget_class_init( mrb_state *mrb ) {
   DEFINE_INSTANCE_METHOD( widget, redraw, MRB_ARGS_NONE() );
   DEFINE_INSTANCE_METHOD( widget, show, MRB_ARGS_NONE() );
   DEFINE_INSTANCE_METHOD( widget, take_focus, MRB_ARGS_NONE() );
+  DEFINE_INSTANCE_METHOD_ACCESSOR( widget, tooltip );
+  DEFINE_INSTANCE_METHOD_ACCESSOR( widget, type );
   mrb_define_method( mrb, mrb_fltk_widget, "visible?", mrb_fltk_widget_visible_instance_method, MRB_ARGS_NONE() ); // TODO: DEFINE_INSTANCE_QUERY_METHOD macro
   DEFINE_INSTANCE_METHOD_ACCESSOR( widget, when );
-  DEFINE_INSTANCE_METHOD_GETTER( widget, width );
-  DEFINE_INSTANCE_METHOD_GETTER( widget, x );
-  DEFINE_INSTANCE_METHOD_GETTER( widget, y );
+  DEFINE_INSTANCE_METHOD_ACCESSOR( widget, width );
+  DEFINE_INSTANCE_METHOD_ACCESSOR( widget, x );
+  DEFINE_INSTANCE_METHOD_ACCESSOR( widget, y );
 
   // mrb_define_method( mrb, mrb_fltk_widget_class, "image", mrb_fltk_widget_image_getter_instance_method, MRB_ARGS_NONE() );
   // mrb_define_method( mrb, mrb_fltk_widget_class, "image=", mrb_fltk_widget_image_setter_instance_method, MRB_ARGS_REQ( 1 ) );

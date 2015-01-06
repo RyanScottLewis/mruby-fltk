@@ -41,7 +41,7 @@ IMPLEMENT_STRING_ATTRIBUTE_ACCESSOR( input, value, Fl_Input, value );
 void mrb_fltk_input_class_init( mrb_state *mrb ) {
   ARENA_SAVE;
 
-  struct RClass *mrb_fltk_module = mrb_class_get( mrb, "FLTK" );
+  struct RClass *mrb_fltk_module = mrb_module_get( mrb, "FLTK" );
   struct RClass *mrb_fltk_widget_class = mrb_class_get_under( mrb, mrb_fltk_module, "Widget" );
 
   DEFINE_CLASS( input, Input, mrb_fltk_widget_class );
